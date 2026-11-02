@@ -1,0 +1,2803 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Interactiv - Vectori în C++, Python și Pseudocod</title>
+    <!-- Tailwind CSS pentru un design modern -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons pentru o interfață intuitivă -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Header / Navigație -->
+    <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-lg">
+                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Probleme rezolvate în C++, Python și limbaj pseudocod</h1>
+                    <p class="text-xs text-indigo-200">Prof. Alina Cîlţan · Clasa a X-a Matematică-Informatică</p>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center space-x-4 text-sm font-medium">
+                <a href="#probleme" class="hover:text-indigo-200 transition">Probleme rezolvate</a>
+                <a href="#simulator" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-white transition flex items-center gap-2">
+                    <i data-lucide="play" class="w-4 h-4"></i> Simulator Execuție Vectori
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conținut Principal -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Sidebar Selector Probleme (3/12 coloane pe ecrane mari) -->
+        <aside class="lg:col-span-4 space-y-4">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sticky top-24 max-h-[calc(100vh-120px)] flex flex-col">
+                <div class="mb-4">
+                    <h2 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                        <i data-lucide="list-ordered" class="text-indigo-600"></i> Probleme selectate (45)
+                    </h2>
+                    <p class="text-xs text-slate-500">Alege o problemă pentru a vizualiza rezolvările în cele 3 limbaje.</p>
+                </div>
+                
+                <!-- Căutare rapidă -->
+                <div class="relative mb-3">
+                    <input type="text" id="search-prob" placeholder="Caută problemă..." class="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                </div>
+
+                <!-- Lista derulantă a problemelor -->
+                <div id="problems-list" class="flex-grow overflow-y-auto space-y-1 pr-1 text-xs">
+                    <!-- Generat dinamic de script -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Zona de Rezolvare și Vizualizare (8/12 coloane) -->
+        <section class="lg:col-span-8 space-y-6">
+            
+            <!-- Secțiune Simulator Interactiv în timp real -->
+            <div id="simulator" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 overflow-hidden">
+                <div class="border-b border-slate-100 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">Modul Practic</span>
+                        <h2 class="text-2xl font-bold text-slate-900 mt-1 flex items-center gap-2">
+                            <i data-lucide="cpu" class="text-emerald-500"></i> Simulator Execuție Vectori
+                        </h2>
+                        <p class="text-sm text-slate-500">Testează algoritmul selectat cu propriile tale numere!</p>
+                    </div>
+                </div>
+
+                <!-- Inputuri Simulator -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg mb-6">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Vectorul de intrare (numere separate prin spațiu sau virgulă):</label>
+                        <input id="sim-input-vector" type="text" value="30, 25, 13, 60, 117" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div id="extra-param-box" class="hidden">
+                        <label id="extra-param-label" class="block text-xs font-semibold uppercase text-slate-600 mb-1">Parametru adițional (k sau x):</label>
+                        <input id="sim-input-param" type="text" value="3" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Vizualizare grafică a vectorului -->
+                <div class="mb-6">
+                    <p class="text-xs font-semibold uppercase text-slate-500 mb-2">Starea Vectorului în Memorie:</p>
+                    <div id="vector-visualization" class="flex flex-wrap gap-2 py-3 px-4 bg-slate-950 rounded-lg min-h-[64px] items-center">
+                        <!-- Generat dinamic la schimbarea vectorului -->
+                    </div>
+                </div>
+
+                <!-- Buton rulare și rezultate -->
+                <div class="flex items-center gap-3 mb-6">
+                    <button id="run-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-bold text-sm transition flex items-center gap-2 shadow-sm">
+                        <i data-lucide="play-circle" class="w-5 h-5"></i> Rulează Algoritmul Selectat
+                    </button>
+                    <button id="reset-sim-btn" class="border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium transition">
+                        Resetează vector
+                    </button>
+                </div>
+
+                <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-4">
+                    <div class="flex items-center gap-2 mb-2 text-indigo-900 font-bold text-sm">
+                        <i data-lucide="terminal" class="w-4 h-4 text-indigo-600"></i> Consola Rezultat simulator:
+                    </div>
+                    <div id="sim-console" class="code-font bg-slate-900 text-emerald-400 p-3 rounded text-sm min-h-[80px] whitespace-pre-wrap">
+Apasă butonul de rulare pentru a vedea rezultatele algoritmului selectat pe datele de intrare de mai sus.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prezentare Cod Sursă -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <!-- Header Problemă curentă -->
+                <div class="border-b border-slate-100 pb-4 mb-6">
+                    <div class="flex items-center gap-2 text-indigo-600 font-bold text-sm mb-1 uppercase tracking-wider">
+                        <i data-lucide="code" class="w-4 h-4"></i> Problema curentă <span id="current-prob-num">1</span>/45
+                    </div>
+                    <h3 id="current-prob-title" class="text-xl font-bold text-slate-900">Suma elementelor vectorului</h3>
+                    <p id="current-prob-desc" class="text-slate-600 mt-2 text-sm leading-relaxed">
+                        Scrieţi un program C++ care citeşte un vector t cu m elemente (numere reale). Să se afişeze suma elementelor vectorului.
+                    </p>
+                </div>
+
+                <!-- Taburi selectare limbaj -->
+                <div class="flex border-b border-slate-200 mb-6">
+                    <button onclick="switchTab('cpp')" id="tab-cpp" class="tab-btn px-4 py-2.5 border-b-2 font-bold text-sm transition flex items-center gap-2 border-indigo-600 text-indigo-600">
+                        <span class="w-5 h-5 rounded-md bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">C++</span> C++
+                    </button>
+                    <button onclick="switchTab('python')" id="tab-python" class="tab-btn px-4 py-2.5 border-b-2 font-medium text-sm text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300 transition flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-yellow-100 text-yellow-700 flex items-center justify-center text-xs font-bold">Py</span> Python
+                    </button>
+                    <button onclick="switchTab('pseudo')" id="tab-pseudo" class="tab-btn px-4 py-2.5 border-b-2 font-medium text-sm text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300 transition flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">PS</span> Pseudocod
+                    </button>
+                </div>
+
+                <!-- Zona de Cod Sursă -->
+                <div class="relative bg-slate-900 rounded-xl overflow-hidden shadow-inner">
+                    <div class="absolute right-4 top-3 flex items-center gap-2 z-10">
+                        <button onclick="copyCode()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-1.5 rounded text-xs font-medium transition flex items-center gap-1.5 border border-slate-700">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copiază Codul
+                        </button>
+                    </div>
+
+                    <!-- Cod C++ -->
+                    <pre id="code-cpp" class="code-block p-5 text-slate-100 code-font text-xs sm:text-sm overflow-x-auto leading-relaxed max-h-[500px] overflow-y-auto">
+// Aici va fi afișat codul C++ generat
+                    </pre>
+
+                    <!-- Cod Python -->
+                    <pre id="code-python" class="code-block p-5 text-slate-100 code-font text-xs sm:text-sm overflow-x-auto leading-relaxed max-h-[500px] overflow-y-auto hidden">
+# Aici va fi afișat codul Python generat
+                    </pre>
+
+                    <!-- Pseudocod -->
+                    <pre id="code-pseudo" class="code-block p-5 text-slate-100 code-font text-xs sm:text-sm overflow-x-auto leading-relaxed max-h-[500px] overflow-y-auto hidden">
+// Aici va fi afișat Pseudocodul generat
+                    </pre>
+                </div>
+
+                <!-- Notă Explicativă suplimentară -->
+                <div class="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg flex gap-3">
+                    <i data-lucide="lightbulb" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i>
+                    <div>
+                        <h4 class="font-bold text-amber-900 text-sm">Explicația algoritmului:</h4>
+                        <p id="algorithm-explanation" class="text-amber-800 text-xs mt-1">
+                            Se parcurg toate elementele vectorului de la prima până la ultima poziție, adunându-se fiecare element la o sumă inițializată cu 0.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p class="font-semibold text-slate-300">Ghid educational de studiu - Tablouri Unidimensionale (Vectori)</p>
+            <p class="mt-2 text-xs text-slate-500">Creat pentru disciplina Informatică · Clasa a X-a · Specializarea Matematică-Informatică</p>
+			 <p class="mt-2 text-xs text-slate-500">Tutorialul a fost generat cu IA</p>
+        </div>
+    </footer>
+
+    <!-- Script pentru date și interactivitate -->
+    <script>
+        // Baza de date a tuturor problemelor din fișa de lucru, cu rezolvările aferente
+        const probleme = [
+            {
+                id: 1,
+                titlu: "Suma elementelor",
+                desc: "Scrieţi un program C++ care citeşte un vector t cu m elemente (numere reale). Să se afişeze suma elementelor vectorului.",
+                extraParam: false,
+                explorare: "Se parcurge vectorul și se acumulează valoarea fiecărui element într-o variabilă numită 'suma', pornită de la 0.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int m;
+    float t[100], suma = 0;
+    
+    cout << "Introduceti numarul de elemente m: ";
+    cin >> m;
+    
+    for(int i = 0; i < m; i++) {
+        cout << "t[" << i << "] = ";
+        cin >> t[i];
+        suma += t[i];
+    }
+    
+    cout << "Suma elementelor este: " << suma << endl;
+    return 0;
+}`,
+                python: `m = int(input("m = "))
+t = []
+for i in range(m):
+    t.append(float(input(f"t[{i}] = ")))
+
+suma = sum(t)
+print(f"Suma elementelor este: {suma}")`,
+                pseudo: `Citeşte m
+Suma <- 0
+Pentru i <- 0, m-1 execută
+    Citeşte t[i]
+    Suma <- Suma + t[i]
+SfârşitPentru
+Scrie Suma`,
+                simulati: (vec) => {
+                    let s = 0;
+                    vec.forEach(x => s += x);
+                    return `Suma elementelor este: ${s.toFixed(2)}`;
+                }
+            },
+            {
+                id: 2,
+                titlu: "Produsul elementelor",
+                desc: "Scrieţi un program C++ care citeşte un vector t cu m elemente (numere reale). Să se afişeze produsul elementelor.",
+                extraParam: false,
+                explorare: "Se parcurge vectorul și se înmulțește fiecare element cu valoarea din variabila 'produs', pornită de la 1.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int m;
+    float t[100], produs = 1;
+    
+    cin >> m;
+    for(int i = 0; i < m; i++) {
+        cin >> t[i];
+        produs *= t[i];
+    }
+    
+    cout << "Produsul elementelor este: " << produs << endl;
+    return 0;
+}`,
+                python: `m = int(input())
+t = [float(x) for x in input().split()]
+produs = 1
+for x in t:
+    produs *= x
+print(f"Produsul este: {produs}")`,
+                pseudo: `Citeşte m
+Produs <- 1
+Pentru i <- 0, m-1 execută
+    Citeşte t[i]
+    Produs <- Produs * t[i]
+SfârşitPentru
+Scrie Produs`,
+                simulati: (vec) => {
+                    let p = 1;
+                    vec.forEach(x => p *= x);
+                    return `Produsul elementelor este: ${p.toFixed(2)}`;
+                }
+            },
+            {
+                id: 3,
+                titlu: "Media aritmetică a vectorului",
+                desc: "Scrieţi un program C++ care citeşte un vector t cu m elemente (numere reale). Să se afişeze media aritmetică a elementelor.",
+                extraParam: false,
+                explorare: "Media aritmetică reprezintă suma elementelor împărțită la numărul total de elemente (m).",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int m;
+    float t[100], suma = 0;
+    cin >> m;
+    for(int i = 0; i < m; i++) {
+        cin >> t[i];
+        suma += t[i];
+    }
+    if (m > 0)
+        cout << "Media aritmetica: " << suma / m << endl;
+    return 0;
+}`,
+                python: `t = [float(x) for x in input().split()]
+if len(t) > 0:
+    print(f"Media aritmetica: {sum(t) / len(t)}")`,
+                pseudo: `Citeşte m
+Suma <- 0
+Pentru i <- 0, m-1 execută
+    Citeşte t[i]
+    Suma <- Suma + t[i]
+SfârşitPentru
+Dacă m > 0 atunci
+    Scrie Suma / m
+SfârşitDacă`,
+                simulati: (vec) => {
+                    if (vec.length === 0) return "Vector vid!";
+                    let s = 0; vec.forEach(x => s += x);
+                    return `Media aritmetică: ${(s / vec.length).toFixed(4)}`;
+                }
+            },
+            {
+                id: 4,
+                titlu: "Media armonică a elementelor",
+                desc: "Se citesc n numere reale pozitive, se memorează într-un vector şi se calculează media armonică. MH = n / (1/x1 + 1/x2 + ... + 1/xn). Exemplu pentru 3, 5, 2, 8 rezultă 3.46.",
+                extraParam: false,
+                explorare: "Se adună în mod inversat fiecare element 1/x la o sumă a inverselor, după care se împarte n la această sumă.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    float x[100], suma_inv = 0;
+    cin >> n;
+    for(int i = 0; i < n; i++) {
+        cin >> x[i];
+        suma_inv += 1.0 / x[i];
+    }
+    cout << "Media armonica: " << n / suma_inv << endl;
+    return 0;
+}`,
+                python: `x = [float(a) for a in input().split()]
+n = len(x)
+suma_inv = sum(1.0 / val for val in x if val != 0)
+print(f"Media armonica: {n / suma_inv:.2f}")`,
+                pseudo: `Citeşte n
+SumaInv <- 0
+Pentru i <- 0, n-1 execută
+    Citeşte x[i]
+    SumaInv <- SumaInv + 1 / x[i]
+SfârşitPentru
+Scrie n / SumaInv`,
+                simulati: (vec) => {
+                    let hasZero = vec.some(x => x === 0);
+                    if(hasZero) return "Eroare: Media armonică necesită numere reale strict pozitive (fără zero).";
+                    let n = vec.length;
+                    let sumInv = 0;
+                    vec.forEach(x => sumInv += 1 / x);
+                    return `Media armonică este: ${(n / sumInv).toFixed(2)}`;
+                }
+            },
+            {
+                id: 5,
+                titlu: "Media aritmetică divizibile cu 3",
+                desc: "Scrieţi un program C++ care citeşte un vector v cu n elemente (numere naturale) şi afişează media aritmetică a numerelor divizibile cu 3.",
+                extraParam: false,
+                explorare: "Identificăm elementele divizibile cu 3 (v[i] % 3 == 0), le însumăm și le numărăm, apoi împărțim suma la contor.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, v[100], k = 0;
+    float suma = 0;
+    cin >> n;
+    for(int i = 0; i < n; i++) {
+        cin >> v[i];
+        if(v[i] % 3 == 0) {
+            suma += v[i];
+            k++;
+        }
+    }
+    if(k > 0) cout << "Media elementelor divizibile cu 3 este: " << suma / k << endl;
+    else cout << "Nu exista elemente divizibile cu 3." << endl;
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+div3 = [x for x in v if x % 3 == 0]
+if len(div3) > 0:
+    print(f"Media este: {sum(div3) / len(div3)}")
+else:
+    print("Nu exista elemente divizibile cu 3.")`,
+                pseudo: `Citeşte n
+Suma <- 0
+K <- 0
+Pentru i <- 0, n-1 execută
+    Citeşte v[i]
+    Dacă v[i] % 3 = 0 atunci
+        Suma <- Suma + v[i]
+        K <- K + 1
+    SfârşitDacă
+SfârşitPentru
+Dacă K > 0 atunci
+    Scrie Suma / K
+altfel
+    Scrie "Nu exista elemente divizibile cu 3"
+SfârşitDacă`,
+                simulati: (vec) => {
+                    let filtered = vec.filter(x => Math.floor(x) % 3 === 0);
+                    if (filtered.length === 0) return "Nu există elemente divizibile cu 3.";
+                    let s = 0; filtered.forEach(x => s += x);
+                    return `Elementele divizibile cu 3: [${filtered.join(', ')}]\nMedia aritmetică a acestora: ${(s/filtered.length).toFixed(2)}`;
+                }
+            },
+            {
+                id: 6,
+                titlu: "Afișare elemente impare",
+                desc: "Se citesc n numere naturale, se memorează într-un vector v, se afişează vectorul şi se afişează elementele care sunt numere impare. Exemplu : v={30, 25, 13, 60, 117} -> 25, 13, 117.",
+                extraParam: false,
+                explorare: "Se verifică dacă fiecare număr v[i] este impar folosind operatorul modulo (v[i] % 2 != 0). Dacă da, se afișează.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, v[100];
+    cin >> n;
+    for(int i = 0; i < n; i++) cin >> v[i];
+    
+    cout << "Vectorul initial: ";
+    for(int i = 0; i < n; i++) cout << v[i] << " ";
+    cout << endl;
+    
+    cout << "Elementele impare: ";
+    for(int i = 0; i < n; i++) {
+        if(v[i] % 2 != 0) cout << v[i] << " ";
+    }
+    cout << endl;
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+print("Vectorul initial:", v)
+impare = [x for x in v if x % 2 != 0]
+print("Elementele impare:", " ".join(map(str, impare)))`,
+                pseudo: `Citeşte n
+Pentru i <- 0, n-1 execută
+    Citeşte v[i]
+SfârşitPentru
+Scrie "Vectorul initial:"
+Pentru i <- 0, n-1 execută
+    Scrie v[i], " "
+SfârşitPentru
+Scrie "Elementele impare:"
+Pentru i <- 0, n-1 execută
+    Dacă v[i] % 2 != 0 atunci
+        Scrie v[i], " "
+    SfârşitDacă
+SfârşitPentru`,
+                simulati: (vec) => {
+                    let impare = vec.filter(x => Math.floor(x) % 2 !== 0);
+                    return `Vectorul inițial: [${vec.join(', ')}]\nElemente impare: [${impare.join(', ')}]`;
+                }
+            },
+            {
+                id: 7,
+                titlu: "Construire vector impare (Vectorul x)",
+                desc: "Se citesc n numere naturale, se construiește vectorul x cu elementele impare din v. Dacă nu există, se afișează 'NU EXISTA'. Exemplu pentru v={30, 25, 13, 60, 117} -> x={25, 13, 117}.",
+                extraParam: false,
+                explorare: "Se folosește un contor k (pornit de la 0). Atunci când întâlnim un element impar, îl salvăm în noul vector la poziția k, după care incrementăm k.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, v[100], x[100], k = 0;
+    cin >> n;
+    for(int i = 0; i < n; i++) {
+        cin >> v[i];
+        if(v[i] % 2 != 0) {
+            x[k] = v[i];
+            k++;
+        }
+    }
+    if(k == 0) cout << "NU EXISTA" << endl;
+    else {
+        cout << "Elementele vectorului x: ";
+        for(int i = 0; i < k; i++) cout << x[i] << " ";
+        cout << endl;
+    }
+    return 0;
+}`,
+                python: `v = [int(i) for i in input().split()]
+x = [elem for elem in v if elem % 2 != 0]
+if len(x) == 0:
+    print("NU EXISTA")
+else:
+    print("Vectorul x:", x)`,
+                pseudo: `Citeşte n
+k <- 0
+Pentru i <- 0, n-1 execută
+    Citeşte v[i]
+    Dacă v[i] % 2 != 0 atunci
+        x[k] <- v[i]
+        k <- k + 1
+    SfârşitDacă
+SfârşitPentru
+Dacă k = 0 atunci
+    Scrie "NU EXISTA"
+altfel
+    Pentru i <- 0, k-1 execută
+        Scrie x[i], " "
+    SfârşitPentru
+SfârşitDacă`,
+                simulati: (vec) => {
+                    let x = vec.filter(val => Math.floor(val) % 2 !== 0);
+                    if(x.length === 0) return "NU EXISTA";
+                    return `Noul vector x (numere impare): [${x.join(', ')}] (dimensiune = ${x.length})`;
+                }
+            },
+            {
+                id: 8,
+                titlu: "Construire vector numere prime",
+                desc: "Se citesc n numere naturale, se construieşte vectorul x cu numerele prime din v. Dacă nu există, se afişează 'NU EXISTA'. Exemplu : v={30, 25, 13, 60, 5, 7} -> x={13, 5, 7}.",
+                extraParam: false,
+                explorare: "Verificăm dacă fiecare număr este prim (are exact doi divizori: 1 și el însuși). Numerele prime identificate sunt adăugate în noul vector x.",
+                cpp: `#include <iostream>
+using namespace std;
+
+bool estePrim(int nr) {
+    if(nr < 2) return false;
+    for(int d = 2; d * d <= nr; d++) {
+        if(nr % d == 0) return false;
+    }
+    return true;
+}
+
+int main() {
+    int n, v[100], x[100], k = 0;
+    cin >> n;
+    for(int i = 0; i < n; i++) {
+        cin >> v[i];
+        if(estePrim(v[i])) {
+            x[k] = v[i];
+            k++;
+        }
+    }
+    if(k == 0) cout << "NU EXISTA" << endl;
+    else {
+        for(int i = 0; i < k; i++) cout << x[i] << " ";
+        cout << endl;
+    }
+    return 0;
+}`,
+                python: `def este_prim(n):
+    if n < 2: return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0: return False
+    return True
+
+v = [int(val) for val in input().split()]
+x = [elem for elem in v if este_prim(elem)]
+if len(x) == 0:
+    print("NU EXISTA")
+else:
+    print("Numerele prime din vector:", x)`,
+                pseudo: `Subprogram estePrim(nr)
+    Dacă nr < 2 atunci returnează FALS SfârşitDacă
+    Pentru d <- 2, [√nr] execută
+        Dacă nr % d = 0 atunci returnează FALS SfârşitDacă
+    SfârşitPentru
+    Returnează ADEVARAT
+SfârşitSubprogram
+
+Citeşte n
+k <- 0
+Pentru i <- 0, n-1 execută
+    Citeşte v[i]
+    Dacă estePrim(v[i]) = ADEVARAT atunci
+        x[k] <- v[i]
+        k <- k + 1
+    SfârşitDacă
+SfârşitPentru
+Dacă k = 0 atunci Scrie "NU EXISTA"
+altfel
+    Pentru i <- 0, k-1 execută Scrie x[i], " " SfârşitPentru
+SfârşitDacă`,
+                simulati: (vec) => {
+                    const isPrime = (num) => {
+                        let n = Math.floor(num);
+                        if(n < 2) return false;
+                        for(let i = 2; i <= Math.sqrt(n); i++){
+                            if(n % i === 0) return false;
+                        }
+                        return true;
+                    }
+                    let x = vec.filter(isPrime);
+                    if(x.length === 0) return "NU EXISTA";
+                    return `Vectorul x (numere prime): [${x.join(', ')}]`;
+                }
+            },
+            {
+                id: 9,
+                titlu: "Elemente palindroame",
+                desc: "Se citesc n numere naturale, se memorează şi se afişează elementele care sunt numere palindroame (egale cu răsturnatul lor). Exemple : v={575, 20, 8, 2332, 800} -> 575, 8, 2332.",
+                extraParam: false,
+                explorare: "Pentru fiecare element din vector, se construiește oglinditul (răsturnatul) cifrelor și se verifică dacă numărul este egal cu oglinditul său.",
+                cpp: `#include <iostream>
+using namespace std;
+
+bool estePalindrom(int nr) {
+    int oglindit = 0, copie = nr;
+    while(copie > 0) {
+        oglindit = oglindit * 10 + copie % 10;
+        copie /= 10;
+    }
+    return nr == oglindit;
+}
+
+int main() {
+    int n, v[100];
+    bool gasit = false;
+    cin >> n;
+    for(int i = 0; i < n; i++) cin >> v[i];
+    
+    for(int i = 0; i < n; i++) {
+        if(estePalindrom(v[i])) {
+            cout << v[i] << " ";
+            gasit = true;
+        }
+    }
+    if(!gasit) cout << "Nu exista palindroame";
+    cout << endl;
+    return 0;
+}`,
+                python: `def este_palindrom(n):
+    return str(n) == str(n)[::-1]
+
+v = [int(x) for x in input().split()]
+palindroame = [x for x in v if este_palindrom(x)]
+if len(palindroame) == 0:
+    print("Nu exista palindroame")
+else:
+    print("Palindroamele sunt:", palindroame)`,
+                pseudo: `Subprogram estePalindrom(nr)
+    oglindit <- 0, copie <- nr
+    CâtTimp copie > 0 execută
+        oglindit <- oglindit * 10 + copie % 10
+        copie [împărțire întreagă] <- 10
+    SfârşitCâtTimp
+    Returnează nr = oglindit
+SfârşitSubprogram`,
+                simulati: (vec) => {
+                    const isPal = (val) => {
+                        let str = Math.abs(Math.floor(val)).toString();
+                        return str === str.split('').reverse().join('');
+                    };
+                    let pals = vec.filter(isPal);
+                    if(pals.length === 0) return "Nu există numere palindroame în vector.";
+                    return `Numerele palindroame sunt: [${pals.join(', ')}]`;
+                }
+            },
+            {
+                id: 10,
+                titlu: "Elemente numere perfecte",
+                desc: "Numere perfecte sunt cele egale cu suma divizorilor lor proprii (inclusiv 1). Exemple : v={60, 90, 6, 790, 28} -> 6, 28.",
+                extraParam: false,
+                explorare: "Pentru fiecare număr, calculăm suma divizorilor proprii (până la jumătatea sa). Dacă suma divizorilor este egală cu numărul, atunci este perfect (ex: 6 = 1 + 2 + 3).",
+                cpp: `#include <iostream>
+using namespace std;
+
+bool estePerfect(int nr) {
+    if (nr <= 1) return false;
+    int suma = 1;
+    for(int d = 2; d <= nr/2; d++) {
+        if(nr % d == 0) suma += d;
+    }
+    return sum == nr;
+}
+
+int main() {
+    int n, v[100];
+    bool gasit = false;
+    cin >> n;
+    for(int i = 0; i < n; i++) cin >> v[i];
+    
+    for(int i = 0; i < n; i++) {
+        if(estePerfect(v[i])) {
+            cout << v[i] << " ";
+            gasit = true;
+        }
+    }
+    if(!gasit) cout << "Nu exista numere perfecte";
+    cout << endl;
+    return 0;
+}`,
+                python: `def este_perfect(n):
+    if n <= 1: return False
+    suma = 1
+    for d in range(2, n // 2 + 1):
+        if n % d == 0:
+            suma += d
+    return suma == n
+
+v = [int(x) for x in input().split()]
+perfecte = [x for x in v if este_perfect(x)]
+if len(perfecte) == 0:
+    print("Nu exista numere perfecte")
+else:
+    print("Numerele perfecte:", perfecte)`,
+                pseudo: `Subprogram estePerfect(nr)
+    Dacă nr <= 1 atunci returnează FALS SfârşitDacă
+    Suma <- 1
+    Pentru d <- 2, nr/2 execută
+        Dacă nr % d = 0 atunci Suma <- Suma + d SfârşitDacă
+    SfârşitPentru
+    Returnează Suma = nr
+SfârşitSubprogram`,
+                simulati: (vec) => {
+                    const isPerfect = (n) => {
+                        let num = Math.floor(n);
+                        if(num <= 1) return false;
+                        let s = 1;
+                        for(let i = 2; i <= num/2; i++) {
+                            if(num % i === 0) s += i;
+                        }
+                        return s === num;
+                    };
+                    let perf = vec.filter(isPerfect);
+                    if(perf.length === 0) return "Nu există numere perfecte (ex. 6, 28, 496).";
+                    return `Numere perfecte găsite: [${perf.join(', ')}]`;
+                }
+            },
+            {
+                id: 11,
+                titlu: "Pătrate perfecte",
+                desc: "Se citesc n numere naturale, se memorează şi se afişează elementele care sunt numere pătrate perfecte. Exemple : v={50, 16, 81, 100, 90} -> 16, 81, 100.",
+                extraParam: false,
+                explorare: "Un număr este pătrat perfect dacă rădăcina sa pătrată este un număr întreg (partea fracționară este zero).",
+                cpp: `#include <iostream>
+#include <cmath>
+using namespace std;
+
+bool estePatratPerfect(int nr) {
+    if(nr < 0) return false;
+    int radacina = sqrt(nr);
+    return radacina * radacina == nr;
+}
+
+int main() {
+    int n, v[100];
+    bool gasit = false;
+    cin >> n;
+    for(int i = 0; i < n; i++) cin >> v[i];
+    
+    for(int i = 0; i < n; i++) {
+        if(estePatratPerfect(v[i])) {
+            cout << v[i] << " ";
+            gasit = true;
+        }
+    }
+    if(!gasit) cout << "Nu exista patrate perfecte";
+    return 0;
+}`,
+                python: `import math
+def este_patrat(n):
+    if n < 0: return False
+    rad = int(math.sqrt(n))
+    return rad * rad == n
+
+v = [int(x) for x in input().split()]
+patrate = [x for x in v if este_patrat(x)]
+if len(patrate) == 0:
+    print("Nu exista patrate perfecte")
+else:
+    print("Patrate perfecte:", patrate)`,
+                pseudo: `Subprogram estePatratPerfect(nr)
+    Dacă nr < 0 atunci returnează FALS SfârşitDacă
+    rad <- [√nr]
+    Returnează rad * rad = nr
+SfârşitSubprogram`,
+                simulati: (vec) => {
+                    const isSq = (n) => {
+                        let num = Math.floor(n);
+                        if(num < 0) return false;
+                        let sq = Math.round(Math.sqrt(num));
+                        return sq * sq === num;
+                    };
+                    let sqs = vec.filter(isSq);
+                    if(sqs.length === 0) return "Nu există pătrate perfecte (ex. 1, 4, 9, 16, 25).";
+                    return `Pătrate perfecte găsite: [${sqs.join(', ')}]`;
+                }
+            },
+            {
+                id: 12,
+                titlu: "Eliminare elemente nule",
+                desc: "Se citesc n numere reale şi se memorează într-un vector t. Să se elimine din vector elementele nule. Exemplu: v={0, 50, 0, 0, 432} -> {50, 432}.",
+                extraParam: false,
+                explorare: "Pentru a elimina un element în mod eficient 'in-place', copiem toate elementele nenule în față, pe măsură ce le descoperim, și reducem lungimea n.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    float t[100];
+    cin >> n;
+    for(int i = 0; i < n; i++) cin >> t[i];
+    
+    int k = 0; // Pozitia urmatorului element nenul
+    for(int i = 0; i < n; i++) {
+        if(t[i] != 0) {
+            t[k] = t[i];
+            k++;
+        }
+    }
+    n = k; // Noul numar de elemente
+    
+    cout << "Vectorul dupa eliminare: ";
+    for(int i = 0; i < n; i++) cout << t[i] << " ";
+    cout << "\\nNoul n: " << n << endl;
+    return 0;
+}`,
+                python: `t = [float(x) for x in input().split()]
+t = [x for x in t if x != 0]
+print("Vectorul dupa eliminare:", t)
+print("Lungime noua:", len(t))`,
+                pseudo: `Citeşte n
+Pentru i <- 0, n-1 execută
+    Citeşte t[i]
+SfârşitPentru
+k <- 0
+Pentru i <- 0, n-1 execută
+    Dacă t[i] != 0 atunci
+        t[k] <- t[i]
+        k <- k + 1
+    SfârşitDacă
+SfârşitPentru
+n <- k
+Pentru i <- 0, n-1 execută
+    Scrie t[i], " "
+SfârşitPentru`,
+                simulati: (vec) => {
+                    let f = vec.filter(x => x !== 0);
+                    return `Vectorul fără elemente nule: [${f.join(', ')}]\nNoua dimensiune: ${f.length}`;
+                }
+            },
+            {
+                id: 13,
+                titlu: "Eliminare numere prime",
+                desc: "Se dă un vector cu n elemente numere naturale. Să se șteargă din vector toate elementele care sunt numere prime. Exemplu: {7, 8, 9, 17, 1} -> {8, 9, 1}.",
+                extraParam: false,
+                explorare: "Folosim o metodă in-place similară, mutând doar elementele care NU sunt prime spre începutul vectorului.",
+                cpp: `#include <iostream>
+using namespace std;
+
+bool estePrim(int nr) {
+    if(nr < 2) return false;
+    for(int d = 2; d * d <= nr; d++) {
+        if(nr % d == 0) return false;
+    }
+    return true;
+}
+
+int main() {
+    int n, v[100];
+    cin >> n;
+    for(int i = 0; i < n; i++) cin >> v[i];
+    
+    int k = 0;
+    for(int i = 0; i < n; i++) {
+        if(!estePrim(v[i])) {
+            v[k] = v[i];
+            k++;
+        }
+    }
+    n = k;
+    for(int i = 0; i < n; i++) cout << v[i] << " ";
+    return 0;
+}`,
+                python: `def este_prim(n):
+    if n < 2: return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0: return False
+    return True
+
+v = [int(x) for x in input().split()]
+v = [x for x in v if not este_prim(x)]
+print("Rezultat:", " ".join(map(str, v)))`,
+                pseudo: `Citeşte n
+k <- 0
+Pentru i <- 0, n-1 execută
+    Citeşte v[i]
+    Dacă estePrim(v[i]) = FALS atunci
+        v[k] <- v[i]
+        k <- k + 1
+    SfârşitDacă
+SfârşitPentru
+n <- k`,
+                simulati: (vec) => {
+                    const isPrime = (num) => {
+                        let n = Math.floor(num);
+                        if(n < 2) return false;
+                        for(let i = 2; i <= Math.sqrt(n); i++){
+                            if(n % i === 0) return false;
+                        }
+                        return true;
+                    }
+                    let res = vec.filter(x => !isPrime(x));
+                    return `După eliminarea numerelor prime: [${res.join(', ')}]`;
+                }
+            },
+            {
+                id: 14,
+                titlu: "Eliminare elemente pare",
+                desc: "Se dă un vector cu n elemente. Să se șteargă din vector toate elementele pare. Exemplu : v={7, 9, 4, 2, 1, 6, 5} -> {7, 9, 1, 5}.",
+                extraParam: false,
+                explorare: "Păstrăm doar elementele impare (elementele % 2 != 0) deplasându-le către primele poziții în mod controlat.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, v[100];
+    cin >> n;
+    for(int i = 0; i < n; i++) cin >> v[i];
+    
+    int k = 0;
+    for(int i = 0; i < n; i++) {
+        if(v[i] % 2 != 0) {
+            v[k] = v[i];
+            k++;
+        }
+    }
+    n = k;
+    for(int i = 0; i < n; i++) cout << v[i] << " ";
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+v = [x for x in v if x % 2 != 0]
+print("Rezultat:", " ".join(map(str, v)))`,
+                pseudo: `Citeşte n
+k <- 0
+Pentru i <- 0, n-1 execută
+    Citeşte v[i]
+    Dacă v[i] % 2 != 0 atunci
+        v[k] <- v[i]
+        k <- k + 1
+    SfârşitDacă
+SfârşitPentru
+n <- k`,
+                simulati: (vec) => {
+                    let res = vec.filter(x => Math.floor(x) % 2 !== 0);
+                    return `După eliminarea numerelor pare (rămân cele impare): [${res.join(', ')}]`;
+                }
+            },
+            {
+                id: 15,
+                titlu: "Inversare elemente vector",
+                desc: "Să se inverseze elementele vectorului în mod in-place și să se afișeze înainte și după.",
+                extraParam: false,
+                explorare: "Folosim regula simetriei: interschimbăm elementul v[i] cu cel simetric v[n-1-i] parcurgând vectorul doar până la jumătate (n/2).",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, v[100];
+    cin >> n;
+    for(int i = 0; i < n; i++) cin >> v[i];
+    
+    cout << "Inainte: ";
+    for(int i = 0; i < n; i++) cout << v[i] << " ";
+    cout << endl;
+    
+    for(int i = 0; i < n / 2; i++) {
+        int temp = v[i];
+        v[i] = v[n - 1 - i];
+        v[n - 1 - i] = temp;
+    }
+    
+    cout << "Dupa inversare: ";
+    for(int i = 0; i < n; i++) cout << v[i] << " ";
+    cout << endl;
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+print("Inainte:", v)
+v.reverse()  # sau v = v[::-1]
+print("Dupa:", v)`,
+                pseudo: `Citeşte n
+Pentru i <- 0, n-1 execută
+    Citeşte v[i]
+SfârşitPentru
+Pentru i <- 0, [n/2]-1 execută
+    temp <- v[i]
+    v[i] <- v[n-1-i]
+    v[n-1-i] <- temp
+SfârşitPentru
+Pentru i <- 0, n-1 execută
+    Scrie v[i], " "
+SfârşitPentru`,
+                simulati: (vec) => {
+                    let copy = [...vec];
+                    copy.reverse();
+                    return `Vectorul inițial: [${vec.join(', ')}]\nVectorul inversat: [${copy.join(', ')}]`;
+                }
+            },
+            {
+                id: 16,
+                titlu: "Determinare minim și poziții",
+                desc: "Se determină minimul elementelor din vector şi poziţiile pe care apare (folosind indexare de la 1 sau 0). Exemplu pentru x={1, 2, 1, 4, 5} -> minimul este 1 la pozițiile 1 și 3.",
+                extraParam: false,
+                explorare: "Găsim mai întâi valoarea minimă din vector, iar apoi facem o a doua parcurgere pentru a afișa indicii unde apare această valoare.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int m, x[100];
+    cin >> m;
+    for(int i = 0; i < m; i++) cin >> x[i];
+    
+    int minim = x[0];
+    for(int i = 1; i < m; i++) {
+        if(x[i] < minim) {
+            minim = x[i];
+        }
+    }
+    
+    cout << "Minimul este " << minim << " si apare pe pozitiile: ";
+    for(int i = 0; i < m; i++) {
+        if(x[i] == minim) {
+            cout << i + 1 << " "; // Afisam pozitiile incepand de la 1
+        }
+    }
+    cout << endl;
+    return 0;
+}`,
+                python: `x = [int(val) for val in input().split()]
+minim = min(x)
+pozitii = [i + 1 for i, val in enumerate(x) if val == minim]
+print(f"Minimul este {minim} si apare pe pozitiile: {pozitii}")`,
+                pseudo: `Citeşte m
+Pentru i <- 0, m-1 execută
+    Citeşte x[i]
+SfârşitPentru
+minim <- x[0]
+Pentru i <- 1, m-1 execută
+    Dacă x[i] < minim atunci
+        minim <- x[i]
+    SfârşitDacă
+SfârşitPentru
+Scrie "Minimul este ", minim, " si apare pe pozitiile: "
+Pentru i <- 0, m-1 execută
+    Dacă x[i] = minim atunci
+        Scrie i + 1, " "
+    SfârşitDacă
+SfârşitPentru`,
+                simulati: (vec) => {
+                    if (vec.length === 0) return "Vector vid!";
+                    let minVal = Math.min(...vec);
+                    let pos = [];
+                    vec.forEach((v, index) => {
+                        if(v === minVal) pos.push(index + 1); // indexare 1-based
+                    });
+                    return `Minimul este: ${minVal}\nApare pe pozițiile (1-based): [${pos.join(', ')}]`;
+                }
+            },
+            {
+                id: 17,
+                titlu: "Numărare numere speciale",
+                desc: "Să se determine câte dintre elementele unui vector de numere naturale sunt: prime, palindroame, perfecte și pătrate perfecte.",
+                extraParam: false,
+                explorare: "Vom implementa subprograme pentru fiecare tip de număr special și vom parcurge vectorul, incrementând câte un contor specific când criteriul este îndeplinit.",
+                cpp: `#include <iostream>
+#include <cmath>
+using namespace std;
+
+bool estePrim(int n) {
+    if(n < 2) return false;
+    for(int d=2; d*d<=n; ++d) if(n%d==0) return false;
+    return true;
+}
+
+bool estePalindrom(int n) {
+    int ogl = 0, cop = n;
+    while(cop > 0) { ogl = ogl * 10 + cop % 10; cop /= 10; }
+    return n == ogl;
+}
+
+bool estePerfect(int n) {
+    if(n <= 1) return false;
+    int s = 1;
+    for(int d=2; d<=n/2; ++d) if(n%d==0) s += d;
+    return s == n;
+}
+
+bool estePatratPerfect(int n) {
+    int rad = sqrt(n);
+    return rad * rad == n;
+}
+
+int main() {
+    int m, t[100], cPrim = 0, cPal = 0, cPerf = 0, cPat = 0;
+    cin >> m;
+    for(int i=0; i<m; ++i) {
+        cin >> t[i];
+        if(estePrim(t[i])) cPrim++;
+        if(estePalindrom(t[i])) cPal++;
+        if(estePerfect(t[i])) cPerf++;
+        if(estePatratPerfect(t[i])) cPat++;
+    }
+    cout << "Prime: " << cPrim << "\\nPalindroame: " << cPal << "\\nPerfecte: " << cPerf << "\\nPatrate perfecte: " << cPat << endl;
+    return 0;
+}`,
+                python: `import math
+
+def este_prim(n):
+    if n < 2: return False
+    for i in range(2, int(n**0.5)+1):
+        if n % i == 0: return False
+    return True
+
+def este_pal(n):
+    return str(n) == str(n)[::-1]
+
+def este_perfect(n):
+    if n <= 1: return False
+    return sum(d for d in range(1, n//2 + 1) if n % d == 0) == n
+
+def este_sq(n):
+    return int(math.sqrt(n))**2 == n
+
+t = [int(x) for x in input().split()]
+print("Prime:", sum(1 for x in t if este_prim(x)))
+print("Palindroame:", sum(1 for x in t if este_pal(x)))
+print("Perfecte:", sum(1 for x in t if este_perfect(x)))
+print("Patrate perfecte:", sum(1 for x in t if este_sq(x)))`,
+                pseudo: `// Se utilizează funcțiile definite în problemele anterioare
+Citeşte m
+cPrim <- 0, cPal <- 0, cPerf <- 0, cPat <- 0
+Pentru i <- 0, m-1 execută
+    Citeşte t[i]
+    Dacă estePrim(t[i]) atunci cPrim <- cPrim + 1 SfârşitDacă
+    Dacă estePalindrom(t[i]) atunci cPal <- cPal + 1 SfârşitDacă
+    Dacă estePerfect(t[i]) atunci cPerf <- cPerf + 1 SfârşitDacă
+    Dacă estePatratPerfect(t[i]) atunci cPat <- cPat + 1 SfârşitDacă
+SfârşitPentru
+Scrie "Prime: ", cPrim
+Scrie "Palindroame: ", cPal
+Scrie "Perfecte: ", cPerf
+Scrie "Patrate perfecte: ", cPat`,
+                simulati: (vec) => {
+                    const isPrime = n => {
+                        let num = Math.floor(n); if(num < 2) return false;
+                        for(let i=2; i<=Math.sqrt(num); i++) if(num%i===0) return false;
+                        return true;
+                    };
+                    const isPal = n => {
+                        let s = Math.abs(Math.floor(n)).toString();
+                        return s === s.split('').reverse().join('');
+                    };
+                    const isPerfect = n => {
+                        let num = Math.floor(n); if(num<=1) return false;
+                        let s=1; for(let i=2; i<=num/2; i++) if(num%i===0) s+=i;
+                        return s === num;
+                    };
+                    const isSq = n => {
+                        let num = Math.floor(n); if(num<0) return false;
+                        let r = Math.round(Math.sqrt(num)); return r*r === num;
+                    };
+                    let prime = vec.filter(isPrime).length;
+                    let pal = vec.filter(isPal).length;
+                    let perf = vec.filter(isPerfect).length;
+                    let sq = vec.filter(isSq).length;
+                    return `Analiza vectorului:\n- Numere Prime: ${prime}\n- Numere Palindroame: ${pal}\n- Numere Perfecte: ${perf}\n- Pătrate Perfecte: ${sq}`;
+                }
+            },
+            {
+                id: 18,
+                titlu: "Palindroame și Poziții",
+                desc: "Afișează elementele care sunt numere palindroame și pozițiile lor, pe linii distincte separate printr-un spațiu.",
+                extraParam: false,
+                explorare: "Pentru fiecare element din vector, dacă verificarea de palindrom e adevărată, afișăm valoarea sa și poziția sa (folosind indexare de la 1 sau 0) pe aceeași linie.",
+                cpp: `#include <iostream>
+using namespace std;
+
+bool estePalindrom(int n) {
+    int ogl = 0, cop = n;
+    while(cop > 0) { ogl = ogl * 10 + cop % 10; cop /= 10; }
+    return n == ogl;
+}
+
+int main() {
+    int m, x[100];
+    cin >> m;
+    for(int i=0; i<m; i++) cin >> x[i];
+    for(int i=0; i<m; i++) {
+        if(estePalindrom(x[i])) {
+            cout << x[i] << " (pozitia " << i << ")\\n";
+        }
+    }
+    return 0;
+}`,
+                python: `x = [int(val) for val in input().split()]
+for i, val in enumerate(x):
+    if str(val) == str(val)[::-1]:
+        print(f"{val} {i}")`,
+                pseudo: `Citeşte m
+Pentru i <- 0, m-1 execută
+    Citeşte x[i]
+SfârşitPentru
+Pentru i <- 0, m-1 execută
+    Dacă estePalindrom(x[i]) atunci
+        Scrie x[i], " ", i
+    SfârşitDacă
+SfârşitPentru`,
+                simulati: (vec) => {
+                    let out = [];
+                    vec.forEach((val, i) => {
+                        let s = Math.abs(Math.floor(val)).toString();
+                        if(s === s.split('').reverse().join('')) {
+                            out.push(`${val} (poz ${i})`);
+                        }
+                    });
+                    return out.length ? out.join('\n') : "Nu există palindroame.";
+                }
+            },
+            {
+                id: 19,
+                titlu: "Elemente pare și poziții",
+                desc: "Citește un vector x cu m elemente și afișează elementele pare și pozițiile acestora, pe linii distincte.",
+                extraParam: false,
+                explorare: "Se verifică dacă x[i] % 2 == 0. În caz afirmativ, se afișează valoarea și indicele i.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int m, x[100];
+    cin >> m;
+    for(int i=0; i<m; i++) cin >> x[i];
+    for(int i=0; i<m; i++) {
+        if(x[i] % 2 == 0) {
+            cout << "Element: " << x[i] << ", Pozitie: " << i << "\\n";
+        }
+    }
+    return 0;
+}`,
+                python: `x = [int(v) for v in input().split()]
+for i, v in enumerate(x):
+    if v % 2 == 0:
+        print(f"Valoare: {v}, Pozitie: {i}")`,
+                pseudo: `Citeşte m
+Pentru i <- 0, m-1 execută
+    Citeşte x[i]
+SfârşitPentru
+Pentru i <- 0, m-1 execută
+    Dacă x[i] % 2 = 0 atunci
+        Scrie x[i], " ", i
+    SfârşitDacă
+SfârşitPentru`,
+                simulati: (vec) => {
+                    let res = [];
+                    vec.forEach((v, i) => {
+                        if(Math.floor(v) % 2 === 0) res.push(`Valoare: ${v} la Pozitia: ${i}`);
+                    });
+                    return res.length ? res.join('\n') : "Niciun element par găsit.";
+                }
+            },
+            {
+                id: 20,
+                titlu: "Numărul de elemente pare vs impare",
+                desc: "Afișează numărul total de elemente pare și cel al elementelor impare pe linii separate.",
+                extraParam: false,
+                explorare: "Contorizăm elementele pare în 'nr_pare', iar pe celelalte în 'nr_impare'.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, v[100], pare = 0, impare = 0;
+    cin >> n;
+    for(int i=0; i<n; i++) {
+        cin >> v[i];
+        if(v[i] % 2 == 0) pare++;
+        else impare++;
+    }
+    cout << "Pare: " << pare << "\\nImpare: " << impare << endl;
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+pare = sum(1 for x in v if x % 2 == 0)
+print(f"Pare: {pare}\\nImpare: {len(v) - pare}")`,
+                pseudo: `Citeşte n
+pare <- 0, impare <- 0
+Pentru i <- 0, n-1 execută
+    Citeşte v[i]
+    Dacă v[i] % 2 = 0 atunci
+        pare <- pare + 1
+    altfel
+        impare <- impare + 1
+    SfârşitDacă
+SfârşitPentru
+Scrie "Pare: ", pare
+Scrie "Impare: ", impare`,
+                simulati: (vec) => {
+                    let pare = vec.filter(x => Math.floor(x) % 2 === 0).length;
+                    let impare = vec.length - pare;
+                    return `Elemente Pare: ${pare}\nElemente Impare: ${impare}`;
+                }
+            },
+            {
+                id: 21,
+                titlu: "Analiză semne (Pozitive/Negative/Nule)",
+                desc: "Se citesc n numere reale, se afişează numărul de elemente pozitive, negative, respectiv nule.",
+                extraParam: false,
+                explorare: "Folosim trei contoare diferite în cadrul unei singure parcurgeri a vectorului.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, poz = 0, neg = 0, nule = 0;
+    float v[100];
+    cin >> n;
+    for(int i=0; i<n; i++) {
+        cin >> v[i];
+        if(v[i] > 0) poz++;
+        else if(v[i] < 0) neg++;
+        else nule++;
+    }
+    cout << "Pozitive: " << poz << "\\nNegative: " << neg << "\\nNule: " << nule << endl;
+    return 0;
+}`,
+                python: `v = [float(x) for x in input().split()]
+poz = sum(1 for x in v if x > 0)
+neg = sum(1 for x in v if x < 0)
+nule = sum(1 for x in v if x == 0)
+print(f"Pozitive: {poz}\\nNegative: {neg}\\nNule: {nule}")`,
+                pseudo: `Citeşte n
+poz <- 0, neg <- 0, nule <- 0
+Pentru i <- 0, n-1 execută
+    Citeşte v[i]
+    Dacă v[i] > 0 atunci poz <- poz + 1
+    altfel
+        Dacă v[i] < 0 atunci neg <- neg + 1
+        altfel nule <- nule + 1
+        SfârşitDacă
+    SfârşitDacă
+SfârşitPentru
+Scrie "Pozitive: ", poz
+Scrie "Negative: ", neg
+Scrie "Nule: ", nule`,
+                simulati: (vec) => {
+                    let poz = vec.filter(x => x > 0).length;
+                    let neg = vec.filter(x => x < 0).length;
+                    let nule = vec.filter(x => x === 0).length;
+                    return `Pozitive (>0): ${poz}\nNegative (<0): ${neg}\nNule (=0): ${nule}`;
+                }
+            },
+            {
+                id: 22,
+                titlu: "Eliminare element de pe poziția k",
+                desc: "Se citește o poziție k (0-based) și se elimină elementul respectiv prin deplasarea elementelor de la dreapta spre stânga.",
+                extraParam: true,
+                extraLabel: "Poziția k de șters (0-based):",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, k;
+    float x[100];
+    cin >> n >> k;
+    for(int i=0; i<n; i++) cin >> x[i];
+    
+    // Eliminarea prin shiftare la stanga
+    for(int i = k; i < n - 1; i++) {
+        x[i] = x[i+1];
+    }
+    n--;
+    
+    for(int i=0; i<n; i++) cout << x[i] << " ";
+    return 0;
+}`,
+                python: `v = [float(x) for x in input().split()]
+k = int(input("Pozitia k: "))
+if 0 <= k < len(v):
+    v.pop(k)
+print("Dupa eliminare:", v)`,
+                pseudo: `Citeşte n, k
+Pentru i <- 0, n-1 execută
+    Citeşte x[i]
+SfârşitPentru
+Pentru i <- k, n-2 execută
+    x[i] <- x[i+1]
+SfârşitPentru
+n <- n - 1
+Pentru i <- 0, n-1 execută Scrie x[i], " " SfârşitPentru`,
+                simulati: (vec, k) => {
+                    let pos = parseInt(k);
+                    if (isNaN(pos) || pos < 0 || pos >= vec.length) return `Eroare: Poziția k=${k} este invalidă pentru un vector de lungime ${vec.length}`;
+                    let copy = [...vec];
+                    copy.splice(pos, 1);
+                    return `Vector inițial: [${vec.join(', ')}]\nEliminat elementul de pe poziția ${pos} (valoarea ${vec[pos]})\nRezultat: [${copy.join(', ')}]`;
+                }
+            },
+            {
+                id: 23,
+                titlu: "Inserare element pe poziția k",
+                desc: "Se citesc n numere și se adaugă o valoare 'val' pe o poziție k în vector (cu mutarea elementelor spre dreapta).",
+                extraParam: true,
+                extraLabel: "Poziția k și valoarea a (format 'pozitie,valoare'):",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, k;
+    float x[100], a;
+    cin >> n >> k >> a;
+    for(int i=0; i<n; i++) cin >> x[i];
+    
+    // Deplasare spre dreapta
+    for(int i = n; i > k; i--) {
+        x[i] = x[i-1];
+    }
+    x[k] = a;
+    n++;
+    
+    for(int i=0; i<n; i++) cout << x[i] << " ";
+    return 0;
+}`,
+                python: `v = [float(x) for x in input().split()]
+k = int(input("Pozitie: "))
+a = float(input("Valoare: "))
+v.insert(k, a)
+print("Dupa inserare:", v)`,
+                pseudo: `Citeşte n, k, a
+Pentru i <- 0, n-1 execută Citeşte x[i] SfârşitPentru
+Pentru i <- n, k+1 execută (pas -1)
+    x[i] <- x[i-1]
+SfârşitPentru
+x[k] <- a
+n <- n + 1`,
+                simulati: (vec, param) => {
+                    let parts = param.split(',');
+                    if (parts.length < 2) return "Introdu parametrul în formatul: pozitie,valoare (Ex: 2,99)";
+                    let k = parseInt(parts[0]);
+                    let a = parseFloat(parts[1]);
+                    if(isNaN(k) || k < 0 || k > vec.length) return "Poziție invalidă!";
+                    let copy = [...vec];
+                    copy.splice(k, 0, a);
+                    return `S-a inserat valoarea ${a} pe poziția ${k}.\nRezultat: [${copy.join(', ')}]`;
+                }
+            },
+            {
+                id: 24,
+                titlu: "Permutare circulară spre DREAPTA",
+                desc: "Se deplasează toate elementele la dreapta cu o poziție, ultimul element devenind primul.",
+                extraParam: false,
+                explorare: "Salvăm ultimul element (v[n-1]), deplasăm elementele v[i] în v[i+1] începând de la final, iar apoi punem valoarea salvată pe prima poziție.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    float x[100];
+    cin >> n;
+    for(int i=0; i<n; i++) cin >> x[i];
+    
+    float t = x[n-1];
+    for(int i = n - 1; i > 0; i--) {
+        x[i] = x[i-1];
+    }
+    x[0] = t;
+    
+    for(int i=0; i<n; i++) cout << x[i] << " ";
+    return 0;
+}`,
+                python: `v = [float(x) for x in input().split()]
+if len(v) > 0:
+    ultimul = v[-1]
+    v = [ultimul] + v[:-1]
+print("Permutare dreapta:", v)`,
+                pseudo: `Citeşte n
+Pentru i <- 0, n-1 execută Citeşte x[i] SfârşitPentru
+t <- x[n-1]
+Pentru i <- n-1, 1 execută (pas -1)
+    x[i] <- x[i-1]
+SfârşitPentru
+x[0] <- t`,
+                simulati: (vec) => {
+                    if (vec.length <= 1) return `Vector neschimbat: [${vec.join(', ')}]`;
+                    let copy = [...vec];
+                    let last = copy.pop();
+                    copy.unshift(last);
+                    return `Înainte: [${vec.join(', ')}]\nDupă permutare circulară dreapta: [${copy.join(', ')}]`;
+                }
+            },
+            {
+                id: 25,
+                titlu: "Permutare circulară spre STÂNGA",
+                desc: "Se mută toate elementele cu o poziție spre stânga, primul element devenind ultimul.",
+                extraParam: false,
+                explorare: "Salvăm primul element, mutăm toate elementele cu un index mai jos, iar cel salvat va fi pus pe ultima poziție.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    float x[100];
+    cin >> n;
+    for(int i=0; i<n; i++) cin >> x[i];
+    
+    float t = x[0];
+    for(int i = 0; i < n - 1; i++) {
+        x[i] = x[i+1];
+    }
+    x[n-1] = t;
+    
+    for(int i=0; i<n; i++) cout << x[i] << " ";
+    return 0;
+}`,
+                python: `v = [float(x) for x in input().split()]
+if len(v) > 0:
+    v = v[1:] + [v[0]]
+print("Permutare stanga:", v)`,
+                pseudo: `Citeşte n
+Pentru i <- 0, n-1 execută Citeşte x[i] SfârşitPentru
+t <- x[0]
+Pentru i <- 0, n-2 execută
+    x[i] <- x[i+1]
+SfârşitPentru
+x[n-1] <- t`,
+                simulati: (vec) => {
+                    if (vec.length <= 1) return `Vector neschimbat: [${vec.join(', ')}]`;
+                    let copy = [...vec];
+                    let first = copy.shift();
+                    copy.push(first);
+                    return `Înainte: [${vec.join(', ')}]\nDupă permutare circulară stânga: [${copy.join(', ')}]`;
+                }
+            },
+            {
+                id: 26,
+                titlu: "Verificare elemente distincte",
+                desc: "Să se verifice dacă toate elementele dintr-un vector sunt distincte (nu se repetă niciunul). Exemplu: {1,2,3,4} -> distincte; {35,89,35,6} -> nu sunt distincte.",
+                extraParam: false,
+                explorare: "Folosim două bucle imbricate (pentru fiecare pereche i, j cu i != j) pentru a vedea dacă există două elemente egale.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int m, x[100];
+    bool distincte = true;
+    cin >> m;
+    for(int i=0; i<m; i++) cin >> x[i];
+    
+    for(int i = 0; i < m - 1 && distincte; i++) {
+        for(int j = i + 1; j < m; j++) {
+            if(x[i] == x[j]) {
+                distincte = false;
+                break;
+            }
+        }
+    }
+    if(distincte) cout << "Elementele sunt distincte";
+    else cout << "Elementele NU sunt distincte";
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+if len(v) == len(set(v)):
+    print("Elementele sunt distincte")
+else:
+    print("Elementele NU sunt distincte")`,
+                pseudo: `Citeşte m
+distincte <- ADEVARAT
+Pentru i <- 0, m-2 execută
+    Pentru j <- i+1, m-1 execută
+        Dacă x[i] = x[j] atunci
+            distincte <- FALS
+        SfârşitDacă
+    SfârşitPentru
+SfârşitPentru
+Dacă distincte = ADEVARAT atunci Scrie "Distincte" altfel Scrie "Nu sunt distincte"`,
+                simulati: (vec) => {
+                    let unique = new Set(vec);
+                    if (unique.size === vec.length) return "DA, toate elementele sunt distincte.";
+                    return `NU, elementele nu sunt distincte. (Unice: ${unique.size} din total ${vec.length})`;
+                }
+            },
+            {
+                id: 27,
+                titlu: "Există elemente impare?",
+                desc: "Să se verifice dacă în șir există cel puțin un element impar. Afișează DA sau NU.",
+                extraParam: false,
+                explorare: "Parcurgem vectorul și ne oprim cu succes (afisand DA) imediat ce găsim un element impar.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, x;
+    bool gasit = false;
+    cin >> n;
+    for(int i=0; i<n; i++) {
+        cin >> x;
+        if(x % 2 != 0) gasit = true;
+    }
+    if(gasit) cout << "DA" << endl;
+    else cout << "NU" << endl;
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+gasit = any(x % 2 != 0 for x in v)
+print("DA" if gasit else "NU")`,
+                pseudo: `Citeşte n
+gasit <- FALS
+Pentru i <- 0, n-1 execută
+    Citeşte v[i]
+    Dacă v[i] % 2 != 0 atunci gasit <- ADEVARAT SfârşitDacă
+SfârşitPentru
+Dacă gasit = ADEVARAT atunci Scrie "DA" altfel Scrie "NU"`,
+                simulati: (vec) => {
+                    let gasit = vec.some(x => Math.floor(x) % 2 !== 0);
+                    return gasit ? "DA (există cel puțin un element impar)" : "NU (toate elementele sunt pare)";
+                }
+            },
+            {
+                id: 28,
+                titlu: "Toate elementele sunt pare?",
+                desc: "Să se verifice dacă toate elementele sunt numere pare. Afișează DA sau NU.",
+                extraParam: false,
+                explorare: "Presupunem inițial că toate sunt pare și căutăm un contraexemplu (un element impar).",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, v[100];
+    bool toatePare = true;
+    cin >> n;
+    for(int i=0; i<n; i++) {
+        cin >> v[i];
+        if(v[i] % 2 != 0) toatePare = false;
+    }
+    if(toatePare) cout << "DA" << endl;
+    else cout << "NU" << endl;
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+toate_pare = all(x % 2 == 0 for x in v)
+print("DA" if toate_pare else "NU")`,
+                pseudo: `Citeşte n
+toatePare <- ADEVARAT
+Pentru i <- 0, n-1 execută
+    Citeşte v[i]
+    Dacă v[i] % 2 != 0 atunci toatePare <- FALS SfârşitDacă
+SfârşitPentru
+Dacă toatePare = ADEVARAT atunci Scrie "DA" altfel Scrie "NU"`,
+                simulati: (vec) => {
+                    let toate = vec.every(x => Math.floor(x) % 2 === 0);
+                    return toate ? "DA (toate elementele sunt pare)" : "NU (există elemente impare)";
+                }
+            },
+            {
+                id: 29,
+                titlu: "Toate elementele sunt egale?",
+                desc: "Verifică dacă toate elementele vectorului au aceeași valoare. Afișează DA sau NU.",
+                extraParam: false,
+                explorare: "Verificăm dacă fiecare element de la poziția 1 încolo este egal cu primul element al vectorului v[0].",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, v[100];
+    bool egale = true;
+    cin >> n;
+    for(int i=0; i<n; i++) cin >> v[i];
+    
+    for(int i = 1; i < n; i++) {
+        if(v[i] != v[0]) {
+            egale = false;
+            break;
+        }
+    }
+    if(egale) cout << "DA" << endl;
+    else cout << "NU" << endl;
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+egale = len(set(v)) <= 1
+print("DA" if egale else "NU")`,
+                pseudo: `Citeşte n
+egale <- ADEVARAT
+Pentru i <- 0, n-1 execută Citeşte v[i] SfârşitPentru
+Pentru i <- 1, n-1 execută
+    Dacă v[i] != v[0] atunci egale <- FALS SfârşitDacă
+SfârşitPentru
+Dacă egale atunci Scrie "DA" altfel Scrie "NU"`,
+                simulati: (vec) => {
+                    if (vec.length <= 1) return "DA (0 sau 1 element)";
+                    let egale = vec.every(x => x === vec[0]);
+                    return egale ? "DA, toate elementele sunt egale." : "NU, există elemente diferite.";
+                }
+            },
+            {
+                id: 30,
+                titlu: "Verificare vector ordonat crescător",
+                desc: "Verifică dacă elementele vectorului sunt în ordine crescătoare. Exemplu: {4, 5, 7, 9, 9, 10} -> DA.",
+                extraParam: false,
+                explorare: "Fiecare element (începând cu al doilea) trebuie să fie mai mare sau egal cu cel dinaintea lui: v[i] >= v[i-1].",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, v[100];
+    bool ordonat = true;
+    cin >> n;
+    for(int i=0; i<n; i++) cin >> v[i];
+    
+    for(int i = 1; i < n; i++) {
+        if(v[i] < v[i-1]) {
+            ordonat = false;
+            break;
+        }
+    }
+    if(ordonat) cout << "DA" << endl;
+    else cout << "NU" << endl;
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+ordonat = all(v[i] >= v[i-1] for i in range(1, len(v)))
+print("DA" if ordonat else "NU")`,
+                pseudo: `Citeşte n
+Pentru i <- 0, n-1 execută Citeşte v[i] SfârşitPentru
+ordonat <- ADEVARAT
+Pentru i <- 1, n-1 execută
+    Dacă v[i] < v[i-1] atunci ordonat <- FALS SfârşitDacă
+SfârşitPentru
+Dacă ordonat atunci Scrie "DA" altfel Scrie "NU"`,
+                simulati: (vec) => {
+                    let ord = true;
+                    for(let i=1; i<vec.length; i++) {
+                        if(vec[i] < vec[i-1]) ord = false;
+                    }
+                    return ord ? "DA (ordonat crescător)" : "NU (nu este ordonat crescător)";
+                }
+            },
+            {
+                id: 31,
+                titlu: "Multipli ai ultimului element",
+                desc: "Verifică dacă toate elementele din vector sunt multipli ai ultimului element. Exemplu pentru {84, 60, 102, 24, 6} -> DA.",
+                extraParam: false,
+                explorare: "Identificăm ultimul element v[n-1] și verificăm dacă toate elementele v[i] se divid la el (v[i] % v[n-1] == 0).",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, v[100];
+    cin >> n;
+    for(int i=0; i<n; i++) cin >> v[i];
+    
+    int ultimul = v[n-1];
+    bool multipli = true;
+    
+    if(ultimul == 0) {
+        multipli = false;
+    } else {
+        for(int i = 0; i < n; i++) {
+            if(v[i] % ultimul != 0) {
+                multipli = false;
+                break;
+            }
+        }
+    }
+    if(multipli) cout << "DA" << endl;
+    else cout << "NU" << endl;
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+if len(v) > 0 and v[-1] != 0:
+    ultimul = v[-1]
+    rez = all(x % ultimul == 0 for x in v)
+    print("DA" if rez else "NU")
+else:
+    print("NU")`,
+                pseudo: `Citeşte n
+Pentru i <- 0, n-1 execută Citeşte v[i] SfârşitPentru
+ultimul <- v[n-1]
+multipli <- ADEVARAT
+Dacă ultimul = 0 atunci multipli <- FALS
+altfel
+    Pentru i <- 0, n-1 execută
+        Dacă v[i] % ultimul != 0 atunci multipli <- FALS SfârşitDacă
+    SfârşitPentru
+SfârşitDacă
+Dacă multipli atunci Scrie "DA" altfel Scrie "NU"`,
+                simulati: (vec) => {
+                    if (vec.length === 0) return "Vectorul este gol.";
+                    let ult = vec[vec.length - 1];
+                    if (ult === 0) return "Ultimul element este 0, nu se poate efectua împărțirea.";
+                    let toti = vec.every(x => Math.floor(x) % ult === 0);
+                    return toti ? `DA, toate elementele sunt multipli ai lui ${ult}` : `NU, nu toate elementele sunt multipli ai lui ${ult}`;
+                }
+            },
+            {
+                id: 32,
+                titlu: "Mulțimi disjuncte",
+                desc: "Verifică dacă mulțimile A și B sunt disjuncte (nu au elemente comune).",
+                extraParam: true,
+                extraLabel: "Elementele mulțimii B (numere):",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, m;
+    float a[100], b[100];
+    bool disjuncte = true;
+    
+    cin >> n >> m;
+    for(int i=0; i<n; i++) cin >> a[i];
+    for(int i=0; i<m; i++) cin >> b[i];
+    
+    for(int i=0; i<n && disjuncte; i++) {
+        for(int j=0; j<m; j++) {
+            if(a[i] == b[j]) {
+                disjuncte = false;
+                break;
+            }
+        }
+    }
+    if(disjuncte) cout << "Disjuncte";
+    else cout << "Nu sunt disjuncte";
+    return 0;
+}`,
+                python: `A = set(input("A: ").split())
+B = set(input("B: ").split())
+if A.isdisjoint(B):
+    print("Disjuncte")
+else:
+    print("Nu sunt disjuncte")`,
+                pseudo: `disjuncte <- ADEVARAT
+Pentru i <- 0, n-1 execută
+    Pentru j <- 0, m-1 execută
+        Dacă A[i] = B[j] atunci disjuncte <- FALS SfârşitDacă
+    SfârşitPentru
+SfârşitPentru`,
+                simulati: (vec, param) => {
+                    let bVec = param.split(/[ ,]+/).map(Number).filter(x => !isNaN(x));
+                    let comune = vec.filter(x => bVec.includes(x));
+                    if (comune.length === 0) return "DA, mulțimile sunt disjuncte (fără elemente comune).";
+                    return `NU, mulțimile nu sunt disjuncte. Elemente comune: [${comune.join(', ')}]`;
+                }
+            },
+            {
+                id: 33,
+                titlu: "Produs Cartezian A x B",
+                desc: "Determină produsul cartezian al mulțimilor A și B sub formă de perechi (a, b).",
+                extraParam: true,
+                extraLabel: "Elementele mulțimii B:",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, m;
+    float a[100], b[100];
+    cin >> n >> m;
+    for(int i=0; i<n; i++) cin >> a[i];
+    for(int j=0; j<m; j++) cin >> b[j];
+    
+    cout << "AxB = {";
+    for(int i=0; i<n; i++) {
+        for(int j=0; j<m; j++) {
+            cout << "(" << a[i] << "," << b[j] << ") ";
+        }
+    }
+    cout << "}" << endl;
+    return 0;
+}`,
+                python: `A = input("A: ").split()
+B = input("B: ").split()
+produs = [(a, b) for a in A for b in B]
+print("AxB:", produs)`,
+                pseudo: `Pentru i <- 0, n-1 execută
+    Pentru j <- 0, m-1 execută
+        Scrie "(", A[i], ",", B[j], ") "
+    SfârşitPentru
+SfârşitPentru`,
+                simulati: (vec, param) => {
+                    let bVec = param.split(/[ ,]+/).map(Number).filter(x => !isNaN(x));
+                    let res = [];
+                    vec.forEach(a => {
+                        bVec.forEach(b => {
+                            res.push(`(${a},${b})`);
+                        });
+                    });
+                    return `A x B = { ${res.join(', ')} }`;
+                }
+            },
+            {
+                id: 34,
+                titlu: "Operații cu Mulțimi (Reuniune, Intersecție, Diferență)",
+                desc: "Determină Reuniunea (A U B), Intersecția (A ∩ B) și Diferența (A - B) pentru două mulțimi.",
+                extraParam: true,
+                extraLabel: "Mulțimea B:",
+                cpp: `#include <iostream>
+using namespace std;
+
+bool apartine(float x, float v[], int n) {
+    for(int i=0; i<n; i++) if(v[i] == x) return true;
+    return false;
+}
+
+int main() {
+    int n, m;
+    float a[100], b[100], r[200], inter[100], dif[100];
+    int kr = 0, ki = 0, kd = 0;
+    
+    cin >> n >> m;
+    for(int i=0; i<n; i++) cin >> a[i];
+    for(int i=0; i<m; i++) cin >> b[i];
+    
+    // Reuniune
+    for(int i=0; i<n; i++) r[kr++] = a[i];
+    for(int i=0; i<m; i++) {
+        if(!apartine(b[i], a, n)) r[kr++] = b[i];
+    }
+    
+    // Intersectie
+    for(int i=0; i<n; i++) {
+        if(apartine(a[i], b, m)) inter[ki++] = a[i];
+    }
+    
+    // Diferenta A - B
+    for(int i=0; i<n; i++) {
+        if(!apartine(a[i], b, m)) dif[kd++] = a[i];
+    }
+    
+    return 0;
+}`,
+                python: `A = set(input().split())
+B = set(input().split())
+print("Reuniune:", A | B)
+print("Intersectie:", A & B)
+print("Diferenta A-B:", A - B)`,
+                pseudo: `// R <- A, I <- vid, D <- vid
+// Pentru fiecare x din B: dacă x nu aparține lui A atunci R <- R U {x}
+// Pentru fiecare x din A: dacă x aparține lui B atunci I <- I U {x} altfel D <- D U {x}`,
+                simulati: (vec, param) => {
+                    let bVec = param.split(/[ ,]+/).map(Number).filter(x => !isNaN(x));
+                    let aSet = new Set(vec);
+                    let bSet = new Set(bVec);
+                    
+                    let reuniune = new Set([...aSet, ...bSet]);
+                    let intersectie = vec.filter(x => bSet.has(x));
+                    let diferenta = vec.filter(x => !bSet.has(x));
+                    
+                    return `A = [${vec.join(', ')}]\nB = [${bVec.join(', ')}]\n\n` +
+                           `1. Reuniune (A U B): [${Array.from(reuniune).join(', ')}]\n` +
+                           `2. Intersecție (A ∩ B): [${Array.from(new Set(intersectie)).join(', ')}]\n` +
+                           `3. Diferență (A - B): [${Array.from(new Set(diferenta)).join(', ')}]`;
+                }
+            },
+            {
+                id: 35,
+                titlu: "Elemente distincte și frecvență",
+                desc: "Se citesc n numere întregi în vectorul x. Să se determine elementele distincte și numărul lor de apariții.",
+                extraParam: false,
+                explorare: "Construim un vector de elemente unice. Pentru fiecare element unic, contorizăm de câte ori apare în vectorul original.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, x[100], unice[100], frecv[100], k = 0;
+    cin >> n;
+    for(int i=0; i<n; i++) cin >> x[i];
+    
+    for(int i=0; i<n; i++) {
+        int poz = -1;
+        for(int j=0; j<k; j++) {
+            if(unice[j] == x[i]) {
+                poz = j;
+                break;
+            }
+        }
+        if(poz == -1) {
+            unice[k] = x[i];
+            frecv[k] = 1;
+            k++;
+        } else {
+            frecv[poz]++;
+        }
+    }
+    for(int i=0; i<k; i++) {
+        cout << unice[i] << " apare de " << frecv[i] << " ori\\n";
+    }
+    return 0;
+}`,
+                python: `from collections import Counter
+x = [int(v) for v in input().split()]
+frecv = Counter(x)
+for elem, count in frecv.items():
+    print(f"{elem} apare de {count} ori")`,
+                pseudo: `k <- 0
+Pentru i <- 0, n-1 execută
+    gasit <- -1
+    Pentru j <- 0, k-1 execută
+        Dacă unice[j] = x[i] atunci gasit <- j SfârşitDacă
+    SfârşitPentru
+    Dacă gasit = -1 atunci
+        unice[k] <- x[i]
+        frecv[k] <- 1
+        k <- k + 1
+    altfel
+        frecv[gasit] <- frecv[gasit] + 1
+    SfârşitDacă
+SfârşitPentru`,
+                simulati: (vec) => {
+                    let map = {};
+                    vec.forEach(x => map[x] = (map[x] || 0) + 1);
+                    let res = [];
+                    for(let key in map) {
+                        res.push(`Numărul ${key} apare de ${map[key]} ori.`);
+                    }
+                    return res.join('\n');
+                }
+            },
+            {
+                id: 36,
+                titlu: "Ordonare crescătoare a vectorului",
+                desc: "Citește un vector și ordonează crescător elementele acestuia folosind metoda selectiei sau a bulelor.",
+                extraParam: false,
+                explorare: "Folosim algoritmul Bubble Sort sau Selecție Directă pentru a sorta elementele în ordine crescătoare.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int m;
+    float a[100];
+    cin >> m;
+    for(int i=0; i<m; i++) cin >> a[i];
+    
+    for(int i=0; i<m-1; i++) {
+        for(int j=i+1; j<m; j++) {
+            if(a[i] > a[j]) {
+                float aux = a[i];
+                a[i] = a[j];
+                a[j] = aux;
+            }
+        }
+    }
+    for(int i=0; i<m; i++) cout << a[i] << " ";
+    return 0;
+}`,
+                python: `a = [float(x) for x in input().split()]
+a.sort()
+print("Ordonat crescator:", a)`,
+                pseudo: `Pentru i <- 0, m-2 execută
+    Pentru j <- i+1, m-1 execută
+        Dacă a[i] > a[j] atunci
+            aux <- a[i]
+            a[i] <- a[j]
+            a[j] <- aux
+        SfârşitDacă
+    SfârşitPentru
+SfârşitPentru`,
+                simulati: (vec) => {
+                    let copy = [...vec].sort((a,b) => a-b);
+                    return `Înainte de sortare: [${vec.join(', ')}]\nDupă sortare crescătoare: [${copy.join(', ')}]`;
+                }
+            },
+            {
+                id: 37,
+                titlu: "Ordonare descrescătoare a vectorului",
+                desc: "Citește un vector și sortează elementele sale în ordine descrescătoare.",
+                extraParam: false,
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int m;
+    float a[100];
+    cin >> m;
+    for(int i=0; i<m; i++) cin >> a[i];
+    
+    for(int i=0; i<m-1; i++) {
+        for(int j=i+1; j<m; j++) {
+            if(a[i] < a[j]) {
+                float aux = a[i];
+                a[i] = a[j];
+                a[j] = aux;
+            }
+        }
+    }
+    for(int i=0; i<m; i++) cout << a[i] << " ";
+    return 0;
+}`,
+                python: `a = [float(x) for x in input().split()]
+a.sort(reverse=True)
+print("Ordonat descrescator:", a)`,
+                pseudo: `Pentru i <- 0, m-2 execută
+    Pentru j <- i+1, m-1 execută
+        Dacă a[i] < a[j] atunci
+            aux <- a[i]
+            a[i] <- a[j]
+            a[j] <- aux
+        SfârşitDacă
+    SfârşitPentru
+SfârşitPentru`,
+                simulati: (vec) => {
+                    let copy = [...vec].sort((a,b) => b-a);
+                    return `Înainte: [${vec.join(', ')}]\nDupă sortare descrescătoare: [${copy.join(', ')}]`;
+                }
+            },
+            {
+                id: 38,
+                titlu: "Ordonare descrescătoare doar a elementelor pozitive",
+                desc: "Ordonează descrescător doar elementele pozitive, păstrând neschimbate pozițiile elementelor negative. Exemplu: {8, -4, -2, 80, 15, 67} -> {80, -4, -2, 67, 15, 8}.",
+                extraParam: false,
+                explorare: "Identificăm elementele pozitive, le sortăm descrescător separat, iar apoi le plasăm înapoi doar pe acele poziții care conțineau numere pozitive.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int m;
+    float a[100];
+    cin >> m;
+    for(int i=0; i<m; i++) cin >> a[i];
+    
+    for(int i=0; i<m-1; i++) {
+        if(a[i] >= 0) {
+            for(int j=i+1; j<m; j++) {
+                if(a[j] >= 0 && a[i] < a[j]) {
+                    float aux = a[i];
+                    a[i] = a[j];
+                    a[j] = aux;
+                }
+            }
+        }
+    }
+    for(int i=0; i<m; i++) cout << a[i] << " ";
+    return 0;
+}`,
+                python: `a = [float(x) for x in input().split()]
+pozitive = sorted([x for x in a if x >= 0], reverse=True)
+idx = 0
+for i in range(len(a)):
+    if a[i] >= 0:
+        a[i] = pozitive[idx]
+        idx += 1
+print("Rezultat:", a)`,
+                pseudo: `Pentru i <- 0, m-2 execută
+    Dacă a[i] >= 0 atunci
+        Pentru j <- i+1, m-1 execută
+            Dacă a[j] >= 0 şi a[i] < a[j] atunci
+                aux <- a[i]
+                a[i] <- a[j]
+                a[j] <- aux
+            SfârşitDacă
+        SfârşitPentru
+    SfârşitDacă
+SfârşitPentru`,
+                simulati: (vec) => {
+                    let copy = [...vec];
+                    let pozitive = copy.filter(x => x >= 0).sort((a,b) => b-a);
+                    let pIdx = 0;
+                    for(let i=0; i<copy.length; i++) {
+                        if(copy[i] >= 0) {
+                            copy[i] = pozitive[pIdx++];
+                        }
+                    }
+                    return `Înainte: [${vec.join(', ')}]\nDupă sortare selectivă (doar pozitivele): [${copy.join(', ')}]`;
+                }
+            },
+            {
+                id: 39,
+                titlu: "Ordonare crescătoare doar a elementelor impare",
+                desc: "Sortează crescător doar numerele impare, fără a schimba poziția numerelor pare. Exemplu : v={20, 89, 7, 40, 32, 15} -> {20, 7, 15, 40, 32, 89}.",
+                extraParam: false,
+                explorare: "Similar cu sortarea selectivă anterioară, însă aplicăm criteriul de impariitate (v[i] % 2 != 0) și ordonăm crescător.",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int m, x[100];
+    cin >> m;
+    for(int i=0; i<m; i++) cin >> x[i];
+    
+    for(int i=0; i<m-1; i++) {
+        if(x[i] % 2 != 0) {
+            for(int j=i+1; j<m; j++) {
+                if(x[j] % 2 != 0 && x[i] > x[j]) {
+                    int aux = x[i];
+                    x[i] = x[j];
+                    x[j] = aux;
+                }
+            }
+        }
+    }
+    for(int i=0; i<m; i++) cout << x[i] << " ";
+    return 0;
+}`,
+                python: `v = [int(x) for x in input().split()]
+impare = sorted([x for x in v if x % 2 != 0])
+idx = 0
+for i in range(len(v)):
+    if v[i] % 2 != 0:
+        v[i] = impare[idx]
+        idx += 1
+print("Rezultat:", v)`,
+                pseudo: `Pentru i <- 0, m-2 execută
+    Dacă x[i] % 2 != 0 atunci
+        Pentru j <- i+1, m-1 execută
+            Dacă x[j] % 2 != 0 şi x[i] > x[j] atunci
+                aux <- x[i]
+                x[i] <- x[j]
+                x[j] <- aux
+            SfârşitDacă
+        SfârşitPentru
+    SfârşitDacă
+SfârşitPentru`,
+                simulati: (vec) => {
+                    let copy = [...vec];
+                    let impare = copy.filter(x => Math.floor(x) % 2 !== 0).sort((a,b) => a-b);
+                    let idx = 0;
+                    for(let i=0; i<copy.length; i++) {
+                        if(Math.floor(copy[i]) % 2 !== 0) {
+                            copy[i] = impare[idx++];
+                        }
+                    }
+                    return `Înainte: [${vec.join(', ')}]\nDupă sortarea selectivă a numerelor impare: [${copy.join(', ')}]`;
+                }
+            },
+            {
+                id: 40,
+                titlu: "Interclasare elemente pozitive",
+                desc: "Se dau doi vectori sortați. Să se construiască un al treilea vector z cu elementele pozitive ordonate crescător, interclasate eficient.",
+                extraParam: true,
+                extraLabel: "Al doilea vector y ordonat crescător:",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, m, k = 0;
+    float x[100], y[100], z[200];
+    cin >> n >> m;
+    for(int i=0; i<n; i++) cin >> x[i];
+    for(int i=0; i<m; i++) cin >> y[i];
+    
+    int i = 0, j = 0;
+    // Gasim primele elemente pozitive din ambele siruri
+    while(i < n && x[i] < 0) i++;
+    while(j < m && y[j] < 0) j++;
+    
+    while(i < n && j < m) {
+        if(x[i] < y[j]) {
+            z[k++] = x[i++];
+        } else {
+            z[k++] = y[j++];
+        }
+    }
+    while(i < n) z[k++] = x[i++];
+    while(j < m) z[k++] = y[j++];
+    
+    for(int p=0; p<k; p++) cout << z[p] << " ";
+    return 0;
+}`,
+                python: `x = [float(a) for a in input().split()]
+y = [float(b) for b in input().split()]
+z = sorted([val for val in x+y if val >= 0])
+print("Interclasat:", z)`,
+                pseudo: `// Se folosesc doi indici i si j
+// Se parcurg in paralel ambele siruri comparand x[i] cu y[j]
+// Elementul mai mic si pozitiv se adauga in z`,
+                simulati: (vec, param) => {
+                    let yVec = param.split(/[ ,]+/).map(Number).filter(x => !isNaN(x));
+                    let combined = [...vec, ...yVec].filter(x => x >= 0).sort((a,b) => a-b);
+                    return `Vector x: [${vec.join(', ')}]\nVector y: [${yVec.join(', ')}]\nRezultat interclasat (doar pozitive): [${combined.join(', ')}]`;
+                }
+            },
+            {
+                id: 41,
+                titlu: "Intersecție eficientă divizibile cu 5",
+                desc: "Construiește vectorul z cu elementele comune din doi vectori ordonați, care sunt și divizibile cu 5.",
+                extraParam: true,
+                extraLabel: "Vectorul y ordonat:",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, m, k = 0, x[100], y[100], z[100];
+    cin >> n >> m;
+    for(int i=0; i<n; i++) cin >> x[i];
+    for(int i=0; i<m; i++) cin >> y[i];
+    
+    int i = 0, j = 0;
+    while(i < n && j < m) {
+        if(x[i] == y[j]) {
+            if(x[i] % 5 == 0) {
+                z[k++] = x[i];
+            }
+            i++; j++;
+        } else if(x[i] < y[j]) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+    for(int p=0; p<k; p++) cout << z[p] << " ";
+    return 0;
+}`,
+                python: `x = [int(a) for a in input().split()]
+y = [int(b) for b in input().split()]
+z = sorted(list(set(x) & set(y)))
+z = [val for val in z if val % 5 == 0]
+print("Rezultat:", z)`,
+                pseudo: `i <- 0, j <- 0, k <- 0
+CâtTimp i < n şi j < m execută
+    Dacă x[i] = y[j] atunci
+        Dacă x[i] % 5 = 0 atunci
+            z[k] <- x[i]
+            k <- k + 1
+        SfârşitDacă
+        i <- i + 1; j <- j + 1
+    altfel
+        Dacă x[i] < y[j] atunci i <- i + 1
+        altfel j <- j + 1
+        SfârşitDacă
+    SfârşitDacă
+SfârşitCâtTimp`,
+                simulati: (vec, param) => {
+                    let yVec = param.split(/[ ,]+/).map(Number).filter(x => !isNaN(x));
+                    let setB = new Set(yVec);
+                    let intersectie = vec.filter(x => setB.has(x) && Math.floor(x) % 5 === 0);
+                    // Eliminam duplicate
+                    let finalZ = Array.from(new Set(intersectie)).sort((a,b)=>a-b);
+                    return `Comune și divizibile cu 5: [${finalZ.join(', ')}]`;
+                }
+            },
+            {
+                id: 42,
+                titlu: "Statistică Procente Note",
+                desc: "Se citesc notele (1-10) la informatică pentru n elevi. Să se realizeze o statistică cu procentul obținut de fiecare notă în parte.",
+                extraParam: false,
+                cpp: `#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    int n, nota, frecv[11] = {0};
+    cin >> n;
+    for(int i=0; i<n; i++) {
+        cin >> nota;
+        if(nota >= 1 && nota <= 10) {
+            frecv[nota]++;
+        }
+    }
+    for(int i=1; i<=10; i++) {
+        float procent = (float)frecv[i] * 100 / n;
+        cout << "Nota " << i << " - " << fixed << setprecision(1) << procent << "%\\n";
+    }
+    return 0;
+}`,
+                python: `notes = [int(x) for x in input().split()]
+n = len(notes)
+frecv = {i: 0 for i in range(1, 11)}
+for nota in notes:
+    if 1 <= nota <= 10:
+        frecv[nota] += 1
+for nota, count in frecv.items():
+    print(f"Nota {nota} - {count * 100 / n:.1f}%")`,
+                pseudo: `// frecv[1..10] initializat cu 0
+Pentru i <- 0, n-1 execută
+    Citeşte nota
+    frecv[nota] <- frecv[nota] + 1
+SfârşitPentru
+Pentru i <- 1, 10 execută
+    Scrie "Nota ", i, " - ", frecv[i]*100/n, "%"
+SfârşitPentru`,
+                simulati: (vec) => {
+                    let frecv = Array(11).fill(0);
+                    let validCount = 0;
+                    vec.forEach(x => {
+                        let nota = Math.floor(x);
+                        if(nota >= 1 && nota <= 10) {
+                            frecv[nota]++;
+                            validCount++;
+                        }
+                    });
+                    if(validCount === 0) return "Nu există note valide (1-10) introduse.";
+                    let out = [];
+                    for(let i=1; i<=10; i++) {
+                        let proc = (frecv[i] * 100) / validCount;
+                        out.push(`Nota ${i}: ${proc.toFixed(1)}% (${frecv[i]} elevi)`);
+                    }
+                    return out.join('\n');
+                }
+            },
+            {
+                id: 43,
+                titlu: "Căutare Secvențială",
+                desc: "Caută valoarea x în mod secvențial (element cu element) în vector. Afișează dacă se găsește și la ce index.",
+                extraParam: true,
+                extraLabel: "Valoarea x de căutat:",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    float v[100], x;
+    bool gasit = false;
+    cin >> n >> x;
+    for(int i=0; i<n; i++) cin >> v[i];
+    
+    for(int i=0; i<n; i++) {
+        if(v[i] == x) {
+            cout << "Gasit la pozitia " << i << endl;
+            gasit = true;
+            break;
+        }
+    }
+    if(!gasit) cout << "Nu s-a gasit" << endl;
+    return 0;
+}`,
+                python: `v = [float(a) for a in input().split()]
+x = float(input("x: "))
+if x in v:
+    print(f"Gasit la indexul {v.index(x)}")
+else:
+    print("Nu s-a gasit")`,
+                pseudo: `gasit <- FALS
+Pentru i <- 0, n-1 execută
+    Dacă v[i] = x atunci
+        Scrie "Gasit la pozitia ", i
+        gasit <- ADEVARAT
+    SfârşitDacă
+SfârşitPentru
+Dacă gasit = FALS atunci Scrie "Nu s-a gasit"`,
+                simulati: (vec, param) => {
+                    let x = parseFloat(param);
+                    if(isNaN(x)) return "Introdu o valoare numerică validă.";
+                    let index = vec.indexOf(x);
+                    if(index !== -1) return `CĂUTARE SECVENȚIALĂ:\nDA, s-a găsit valoarea ${x} la indicele/poziția: ${index}`;
+                    return `CĂUTARE SECVENȚIALĂ:\nNU, valoarea ${x} nu există în vector.`;
+                }
+            },
+            {
+                id: 44,
+                titlu: "Căutare Binară (Pe vector sortat)",
+                desc: "Caută valoarea x într-un vector ordonat crescător, în timp logaritmic O(log n), înjumătățind repetat intervalul de căutare.",
+                extraParam: true,
+                extraLabel: "Valoarea x de căutat (vectorul TREBUIE să fie sortat):",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    float v[100], x;
+    cin >> n >> x;
+    for(int i=0; i<n; i++) cin >> v[i]; // trebuie sa fie ordonat crescator
+    
+    int stang = 0, drept = n - 1, poz = -1;
+    while(stang <= drept) {
+        int mijloc = stang + (drept - stang) / 2;
+        if(v[mijloc] == x) {
+            poz = mijloc;
+            break;
+        } else if(v[mijloc] < x) {
+            stang = mijloc + 1;
+        } else {
+            drept = mijloc - 1;
+        }
+    }
+    if(poz != -1) cout << "Gasit la pozitia " << poz << endl;
+    else cout << "Nu s-a gasit" << endl;
+    return 0;
+}`,
+                python: `v = sorted([float(a) for a in input().split()])
+x = float(input("x: "))
+st, dr = 0, len(v)-1
+gasit = -1
+while st <= dr:
+    mij = (st + dr) // 2
+    if v[mij] == x:
+        gasit = mij
+        break
+    elif v[mij] < x:
+        st = mij + 1
+    else:
+        dr = mij - 1
+print(f"Gasit la indexul {gasit}" if gasit != -1 else "Nu s-a gasit")`,
+                pseudo: `stang <- 0, drept <- n-1, poz <- -1
+CâtTimp stang <= drept execută
+    mijloc <- [ (stang + drept) / 2 ]
+    Dacă v[mijloc] = x atunci
+        poz <- mijloc
+        stang <- drept + 1 // opreste bucla
+    altfel
+        Dacă v[mijloc] < x atunci stang <- mijloc + 1
+        altfel drept <- mijloc - 1
+        SfârşitDacă
+    SfârşitDacă
+SfârşitCâtTimp`,
+                simulati: (vec, param) => {
+                    let x = parseFloat(param);
+                    if(isNaN(x)) return "Introdu o valoare numerică.";
+                    // Sortam temporar pentru a simula corect cautarea binara
+                    let sorted = [...vec].sort((a,b)=>a-b);
+                    let st = 0, dr = sorted.length - 1;
+                    let gasit = -1;
+                    let steps = [];
+                    while(st <= dr) {
+                        let mij = Math.floor((st + dr) / 2);
+                        steps.push(`Pas: Căutăm în intervalul [${st}..${dr}], mijlocul este la poz ${mij} (valoarea ${sorted[mij]})`);
+                        if(sorted[mij] === x) {
+                            gasit = mij;
+                            break;
+                        } else if(sorted[mij] < x) {
+                            st = mij + 1;
+                        } else {
+                            dr = mij - 1;
+                        }
+                    }
+                    let out = `Vector sortat pentru căutare: [${sorted.join(', ')}]\n\n` + steps.join('\n');
+                    if(gasit !== -1) {
+                        out += `\n\nRezultat: Găsit la poziția ${gasit} în vectorul sortat!`;
+                    } else {
+                        out += `\n\nRezultat: Negăsit.`;
+                    }
+                    return out;
+                }
+            },
+            {
+                id: 45,
+                titlu: "Sortare asimetrică după maxim",
+                desc: "Localizează maximul vectorului. Ordonează crescător elementele dinaintea lui și descrescător pe cele de după el. Exemplu : {5, 10, 110, 4, 20, 3000, 34, 8, 91} -> 3000 e maxim; ordonează crescător stânga, descrescător dreapta.",
+                extraParam: false,
+                explorare: "Identificăm poziția elementului maxim. Împărțim vectorul în două sub-intervale: de la 0 la poz_max-1 (pe care îl sortăm crescător) și de la poz_max+1 la n-1 (pe care îl sortăm descrescător).",
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, x[100];
+    cin >> n;
+    for(int i=0; i<n; i++) cin >> x[i];
+    
+    // Gasim indexul maximului
+    int imax = 0;
+    for(int i = 1; i < n; i++) {
+        if(x[i] > x[imax]) {
+            imax = i;
+        }
+    }
+    
+    // Sortam crescator inainte de imax
+    for(int i=0; i<imax-1; i++) {
+        for(int j=i+1; j<imax; j++) {
+            if(x[i] > x[j]) {
+                int aux = x[i];
+                x[i] = x[j];
+                x[j] = aux;
+            }
+        }
+    }
+    
+    // Sortam descrescator dupa imax
+    for(int i=imax+1; i<n-1; i++) {
+        for(int j=i+1; j<n; j++) {
+            if(x[i] < x[j]) {
+                int aux = x[i];
+                x[i] = x[j];
+                x[j] = aux;
+            }
+        }
+    }
+    
+    for(int i=0; i<n; i++) cout << x[i] << " ";
+    return 0;
+}`,
+                python: `x = [int(v) for v in input().split()]
+val_max = max(x)
+imax = x.index(val_max)
+
+stanga = sorted(x[:imax])
+dreapta = sorted(x[imax+1:], reverse=True)
+
+rezultat = stanga + [val_max] + dreapta
+print("Rezultat:", rezultat)`,
+                pseudo: `// 1. Gaseste imax (pozitia elementului maxim)
+// 2. Sorteaza crescator sub-vectorul x[0 .. imax-1]
+// 3. Sorteaza descrescator sub-vectorul x[imax+1 .. n-1]`,
+                simulati: (vec) => {
+                    if (vec.length <= 1) return `Prea puține elemente: [${vec.join(', ')}]`;
+                    let maxVal = Math.max(...vec);
+                    let imax = vec.indexOf(maxVal);
+                    
+                    let stanga = vec.slice(0, imax).sort((a,b)=>a-b);
+                    let dreapta = vec.slice(imax + 1).sort((a,b)=>b-a);
+                    
+                    let finalVec = [...stanga, maxVal, ...dreapta];
+                    return `Pasul 1: Identificare Maxim: ${maxVal} la poziția ${imax}\n` +
+                           `Pasul 2: Sortează stânga [${vec.slice(0, imax).join(', ')}] crescător -> [${stanga.join(', ')}]\n` +
+                           `Pasul 3: Sortează dreapta [${vec.slice(imax+1).join(', ')}] descrescător -> [${dreapta.join(', ')}]\n\n` +
+                           `Rezultat Final: [${finalVec.join(', ')}]`;
+                }
+            }
+        ];
+
+        let problemaCurentaId = 1;
+        let limbajCurent = 'cpp';
+
+        // Inițializare document
+        window.addEventListener('DOMContentLoaded', () => {
+            renderProblemsList();
+            selectProblem(1);
+            lucide.createIcons();
+            
+            // Setup listener căutare probleme
+            document.getElementById('search-prob').addEventListener('input', (e) => {
+                renderProblemsList(e.target.value);
+            });
+
+            // Rulare simulator
+            document.getElementById('run-btn').addEventListener('click', runSimulation);
+            document.getElementById('reset-sim-btn').addEventListener('click', () => {
+                document.getElementById('sim-input-vector').value = "30, 25, 13, 60, 117";
+                updateVectorVisuals();
+            });
+
+            // Update vizualizare la schimbarea inputului
+            document.getElementById('sim-input-vector').addEventListener('input', updateVectorVisuals);
+            updateVectorVisuals();
+        });
+
+        // Randarea listei de probleme din stânga
+        function renderProblemsList(filter = '') {
+            const container = document.getElementById('problems-list');
+            container.innerHTML = '';
+            
+            const filtered = probleme.filter(p => 
+                p.titlu.toLowerCase().includes(filter.toLowerCase()) || 
+                p.desc.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            filtered.forEach(p => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-2.5 rounded-lg mb-1.5 border transition duration-200 flex items-start gap-2 ${
+                    p.id === problemaCurentaId 
+                    ? 'bg-indigo-50 border-indigo-300 text-indigo-900 font-semibold' 
+                    : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-700'
+                }`;
+                btn.onclick = () => selectProblem(p.id);
+                btn.innerHTML = `
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-md text-[10px] font-bold ${
+                        p.id === problemaCurentaId ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-600'
+                    }">${p.id}</span>
+                    <span class="truncate block flex-grow">${p.titlu}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        // Selectarea unei probleme
+        function selectProblem(id) {
+            problemaCurentaId = id;
+            const prob = probleme.find(p => p.id === id);
+            
+            // Actualizare titlu, descriere și explicație
+            document.getElementById('current-prob-num').innerText = prob.id;
+            document.getElementById('current-prob-title').innerText = prob.titlu;
+            document.getElementById('current-prob-desc').innerText = prob.desc;
+            document.getElementById('algorithm-explanation').innerText = prob.explorare || "Se prelucrează vectorul conform cerinței.";
+
+            // Generare coduri sursă
+            document.getElementById('code-cpp').textContent = prob.cpp;
+            document.getElementById('code-python').textContent = prob.python;
+            document.getElementById('code-pseudo').textContent = prob.pseudo;
+
+            // Parametrii suplimentari ai simulatorului
+            const extraBox = document.getElementById('extra-param-box');
+            if (prob.extraParam) {
+                extraBox.classList.remove('hidden');
+                document.getElementById('extra-param-label').innerText = prob.extraLabel || "Parametru:";
+            } else {
+                extraBox.classList.add('hidden');
+            }
+
+            // Re-randare listă pentru a marca elementul activ
+            renderProblemsList(document.getElementById('search-prob').value);
+            
+            // Reset consoli simulator
+            document.getElementById('sim-console').innerText = "Apasă butonul de rulare pentru simulator.";
+            
+            // Scroll la vizualizare cod pe telefoane
+            if (window.innerWidth < 1024) {
+                document.getElementById('simulator').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Schimbarea tabului de limbaj (C++, Python, Pseudocod)
+        function switchTab(limbaj) {
+            limbajCurent = limbaj;
+            
+            // Resetare taburi stiluri
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2.5 border-b-2 font-medium text-sm text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300 transition flex items-center gap-2";
+            });
+
+            // Ascunde toate blocurile de cod
+            document.querySelectorAll('.code-block').forEach(block => block.classList.add('hidden'));
+
+            // Activează tab-ul curent
+            if (limbaj === 'cpp') {
+                document.getElementById('tab-cpp').className = "tab-btn px-4 py-2.5 border-b-2 font-bold text-sm transition flex items-center gap-2 border-indigo-600 text-indigo-600";
+                document.getElementById('code-cpp').classList.remove('hidden');
+            } else if (limbaj === 'python') {
+                document.getElementById('tab-python').className = "tab-btn px-4 py-2.5 border-b-2 font-bold text-sm transition flex items-center gap-2 border-indigo-600 text-indigo-600";
+                document.getElementById('code-python').classList.remove('hidden');
+            } else if (limbaj === 'pseudo') {
+                document.getElementById('tab-pseudo').className = "tab-btn px-4 py-2.5 border-b-2 font-bold text-sm transition flex items-center gap-2 border-indigo-600 text-indigo-600";
+                document.getElementById('code-pseudo').classList.remove('hidden');
+            }
+        }
+
+        // Copiere cod în clipboard
+        function copyCode() {
+            let activeText = "";
+            if (limbajCurent === 'cpp') activeText = document.getElementById('code-cpp').textContent;
+            else if (limbajCurent === 'python') activeText = document.getElementById('code-python').textContent;
+            else activeText = document.getElementById('code-pseudo').textContent;
+
+            // Folosim execCommand din cauza iframe-ului
+            const el = document.createElement('textarea');
+            el.value = activeText;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            alert("Codul a fost copiat în clipboard!");
+        }
+
+        // Extrage vectorul din input
+        function parseVectorInput() {
+            const rawVal = document.getElementById('sim-input-vector').value;
+            // Desparte după spații, virgulă, punct-virgulă sau paranteze drepte/acolade
+            return rawVal.replace(/[\[\]\{\}]/g, '').split(/[\s,;]+/).map(Number).filter(x => !isNaN(x));
+        }
+
+        // Actualizare stări vizuale vector în memorie
+        function updateVectorVisuals() {
+            const container = document.getElementById('vector-visualization');
+            container.innerHTML = '';
+            
+            const arr = parseVectorInput();
+            if(arr.length === 0) {
+                container.innerHTML = '<span class="text-slate-500 text-xs italic p-2">Introduceți numere separate prin spațiu sau virgulă...</span>';
+                return;
+            }
+
+            arr.forEach((val, idx) => {
+                const item = document.createElement('div');
+                item.className = "flex flex-col items-center justify-center bg-indigo-950 border border-indigo-700/50 rounded-lg p-2 min-w-[50px] shadow-sm animate-fade-in";
+                item.innerHTML = `
+                    <span class="text-[9px] text-indigo-400 font-semibold mb-0.5">pos ${idx}</span>
+                    <span class="text-sm font-bold text-emerald-400">${val}</span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Rularea algoritmului curent în simulator
+        function runSimulation() {
+            const vec = parseVectorInput();
+            if(vec.length === 0) {
+                document.getElementById('sim-console').innerText = "Eroare: Vectorul de intrare este gol!";
+                return;
+            }
+
+            const currentProb = probleme.find(p => p.id === problemaCurentaId);
+            const extraVal = document.getElementById('sim-input-param').value;
+
+            try {
+                // Rulăm funcția de simulare asociată problemei
+                const out = currentProb.simulati(vec, extraVal);
+                document.getElementById('sim-console').innerText = out;
+            } catch (err) {
+                document.getElementById('sim-console').innerText = `Eroare la rularea simulatorului: ${err.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
